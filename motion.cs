@@ -224,20 +224,7 @@ public class motion : MonoBehaviour
 
         while (count > 0)
         {
-
-
-            //motion_processing = null;
             motion_processing = grounds[count - 1].GetComponent<motion>();
-
-            //if (dummy_transform_position.x == -6.72f)
-            //{
-            //    Debug.Log("-6.72f");
-            //}
-
-            //if (dummy_transform_position.x < -6.72f)
-            //{
-            //    Debug.Log("-6.72fより大きい");
-            //}
 
             {//動いていないときの判定
                 if (dummy_transform_position.x == befor_transform_position.x)
@@ -253,14 +240,14 @@ public class motion : MonoBehaviour
                     {
                         dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
                         square_ground_wall_left[count - 1] = true;
-                        Debug.Log("working");//問題なし
+                        //Debug.Log("working");//問題なし
                     }
                     else
                     {
                         square_ground_wall_left[count - 1] = false;
                         //Debug.Log("falsed");
                     }
-                    Debug.Log("no move");//右押すとここが動かない(移動してないのに)
+                    //Debug.Log("no move");//右押すとここが動かない(移動してないのに)
                 }
                 //else Debug.Log(dummy_transform_position + "," + befor_transform_position);
             }
@@ -321,31 +308,29 @@ public class motion : MonoBehaviour
                 else
                 {
                     square_ground_wall_left[count - 1] = false;
-                    //Debug.Log("falsed");
                 }
 
                 //touching_something = true;
             }
             else if (is_x_0 == false)
             {
-                touching_something = true;
+                //touching_something = true;
 
-                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && touch_left == false)//右側ぶつかる
+                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && touch_left == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
                 {
                     dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                     square_ground_wall_right[count - 1] = true;
                 }
 
-                if ((a1 * motion_processing.scriptcol_x.x + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.x + b1) <= motion_processing.scriptcol_y.x && touch_right == false)//左側ぶつかる
+                if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && touch_right == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
                 {
-                    dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
+                    dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
                     square_ground_wall_left[count - 1] = true;
                     //Debug.Log("working1");
                 }
             }
 
             set_cols();
-            //Debug.Log(square_ground_wall_left[count - 1]);
 
             if (square_ground_wall_right[count - 1] == false && scriptcol_x.x == motion_processing.scriptcol_x.y)
             {
@@ -357,14 +342,11 @@ public class motion : MonoBehaviour
             {
                 dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 square_ground_wall_left[count - 1] = true;
-                Debug.Log("hello-");//ここが動いてる、今度はなんでfalseが検知されちゃうか(ここが実行される前になんで動かない?,,,コリダーリセットが必要 => 関数で再設定 - 関数追加済み、あとはいい感じに関数呼び出しを配置)
+                //Debug.Log("hello-");
             }
             if (square_ground_wall_up[count - 1] == false && scriptcol_y.x == motion_processing.scriptcol_y.y) square_ground_wall_up[count - 1] = true;
 
             if (square_ground_wall_down[count - 1] == false && scriptcol_y.y == motion_processing.scriptcol_y.x) square_ground_wall_down[count - 1] = true;
-
-            //使うとおかしくなる。というか使わなくてもうまく位置が調整されない　調整して進んだのが動いたのが描画されている?
-            //if (square_ground_wall_left[count - 1] || square_ground_wall_right[count - 1]) dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
 
             count -= 1;
         }
