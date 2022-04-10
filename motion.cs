@@ -184,7 +184,7 @@ public class motion : MonoBehaviour
             a4 = 0;
 
             check += 1;
-            is_x_0 = true;
+            is_y_0 = true;
         }
         if (dummy_transform_position.y == befor_transform_position.y)
         {
@@ -201,7 +201,7 @@ public class motion : MonoBehaviour
             a4 = -1;
 
             check += 1;
-            is_y_0 = true;
+            is_x_0 = true;
             //Debug.Log("trueed");
         }
 
@@ -217,7 +217,7 @@ public class motion : MonoBehaviour
             b3 = scriptcol_y.y - (a3 * scriptcol_x.x);
             b4 = scriptcol_y.y - (a4 * scriptcol_x.y);
 
-            is_y_0 = false;
+            is_x_0 = false;
         }
 
         motion motion_processing;
@@ -227,7 +227,7 @@ public class motion : MonoBehaviour
             motion_processing = grounds[count - 1].GetComponent<motion>();
 
             {//動いていないときの判定
-                if (dummy_transform_position.x == befor_transform_position.x)
+                if (dummy_transform_position.x == befor_transform_position.x && dummy_transform_position.y == befor_transform_position.x)
                 {
                     if (square_ground_wall_right[count - 1] == false && scriptcol_x.x >= motion_processing.scriptcol_x.y && scriptcol_x.y <= motion_processing.scriptcol_x.x && dummy_transform_position.x < motion_processing.dummy_transform_position.x && scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)//右側
                     {
@@ -254,17 +254,32 @@ public class motion : MonoBehaviour
 
 
             {//動いてないとき用
+                //左右
                 if (dummy_transform_position.x == befor_transform_position.x && square_ground_wall_right[count - 1] && (scriptcol_x.x != motion_processing.scriptcol_x.y || scriptcol_y.x < motion_processing.scriptcol_y.y || scriptcol_y.y > motion_processing.scriptcol_y.y))// && scriptcol_y.y <= motion_processing.scriptcol_y.x))//右側ぶつかる
                 {
                     square_ground_wall_right[count - 1] = false;
+                    Debug.Log("waaah");
                 }
                 if (dummy_transform_position.x == befor_transform_position.x && square_ground_wall_left[count - 1] && (scriptcol_x.y != motion_processing.scriptcol_x.x || scriptcol_y.x < motion_processing.scriptcol_y.y || scriptcol_y.y > motion_processing.scriptcol_y.x))//!(scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)))//!(scriptcol_x.y <= motion_processing.scriptcol_x.x && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && touch_right == false && scriptcol_y.x >= motion_processing.scriptcol_y.y && scriptcol_y.y <= motion_processing.scriptcol_y.x))//左側ぶつかる
                 {
                     square_ground_wall_left[count - 1] = false;
                     Debug.Log("c");
                 }
+
+                //上下
+                if (dummy_transform_position.y == befor_transform_position.y && square_ground_wall_up[count - 1] && (scriptcol_y.x != motion_processing.scriptcol_y.y || scriptcol_x.x < motion_processing.scriptcol_x.y || scriptcol_x.y > motion_processing.scriptcol_x.x))// && scriptcol_y.y <= motion_processing.scriptcol_y.x))//右側ぶつかる
+                {
+                    square_ground_wall_up[count - 1] = false;
+                    Debug.Log("1up");
+                }
+                //if (dummy_transform_position.x == befor_transform_position.x && square_ground_wall_left[count - 1] && (scriptcol_x.y != motion_processing.scriptcol_x.x || scriptcol_y.x < motion_processing.scriptcol_y.y || scriptcol_y.y > motion_processing.scriptcol_y.x))//!(scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)))//!(scriptcol_x.y <= motion_processing.scriptcol_x.x && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && touch_right == false && scriptcol_y.x >= motion_processing.scriptcol_y.y && scriptcol_y.y <= motion_processing.scriptcol_y.x))//左側ぶつかる
+                //{
+                //    square_ground_wall_left[count - 1] = false;
+                //    Debug.Log("c");
+                //}
             }
 
+            
             //player_pos();
 
             if (square_ground_wall_right[count - 1] && square_ground_wall_up[count - 1] == false && square_ground_wall_down[count - 1] == false && motion_processing.scriptcol_x.y < scriptcol_x.x)//右側
@@ -280,7 +295,7 @@ public class motion : MonoBehaviour
             
 
 
-            if (is_y_0 == true && is_x_0 == false)//X座標のみ
+            if (is_x_0 == true && is_y_0 == false)//X座標のみ
             {
                 //右でも左でも
 
@@ -288,7 +303,7 @@ public class motion : MonoBehaviour
                 {
                     dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                     square_ground_wall_right[count - 1] = true;
-                    Debug.Log("touch-right" + touch_left);
+                    Debug.Log("touch-right" + touch_left + (dummy_transform_position.x + (motion_processing.scriptcol_x.y + -scriptcol_x.x)));
                 }
                 else
                 {
@@ -312,33 +327,138 @@ public class motion : MonoBehaviour
 
                 //touching_something = true;
             }
-            else if (is_x_0 == false)
+            else if (is_y_0 == false)
             {
+                
                 //touching_something = true;
+                Vector2 local_savepos;
+                Vector2 movement_fordecide_1;
+                Vector2 movement_fordecide_2;
 
-                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && touch_left == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
+                //- 1次関数の等式変形 -
+
+                //y = ax + b
+                //y / x = a + b
+                //1 / x = (a + b) / y
+
+                //y = ax + b
+                //y - b = ax
+                //(y - b) / a = x
+                //x = (y - b) / a
+
+                set_cols();
+
+                //if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//上面か下面
+                {
+                    //Debug.Log("hello" + "" + (scriptcol_y.y > befor_scriptcol_y.x) + "" + (scriptcol_y.y <= scriptcol_y.x) + "" + ((motion_processing.scriptcol_y.y - b1) / a1 > motion_processing.scriptcol_x.y) + "" + ((motion_processing.scriptcol_y.y - b1) / a1 < motion_processing.scriptcol_x.x) + ((motion_processing.scriptcol_y.y - b1) / a1) + (befor_transform_position.y - dummy_transform_position.y < 0));
+                    //if (motion_processing.scriptcol_x.y < scriptcol_x.x && motion_processing.scriptcol_y.y < scriptcol_y.x) UnityEditor.EditorApplication.isPaused = true;
+
+                    if (motion_processing.scriptcol_y.y > befor_scriptcol_y.x && motion_processing.scriptcol_y.y <= scriptcol_y.x && (motion_processing.scriptcol_y.y - b1) / a1 > motion_processing.scriptcol_x.y && (motion_processing.scriptcol_y.y - b1) / a1 < motion_processing.scriptcol_x.x && befor_transform_position.y - dummy_transform_position.y < 0)//先にぶつかったのは横か縦か-相手の下面-
+                    {
+                        //Debug.Log("he" + (((motion_processing.scriptcol_y.y - b1) / a1) - dummy_transform_position.x));
+
+                        if (befor_transform_position.x - dummy_transform_position.x != 0)
+                        {
+                            if (befor_transform_position.x - dummy_transform_position.x < 0)//進む方向が正
+                            {
+                                if ((motion_processing.scriptcol_y.y - b1) / a1 > befor_scriptcol_x.x && (motion_processing.scriptcol_y.y - b1) / a1 <= scriptcol_x.x)
+                                {
+                                    //dummy_transform_position += new Vector3(((motion_processing.scriptcol_y.y - b1) / a1) - dummy_transform_position.x, (a1 * ((motion_processing.scriptcol_y.y - b1) / a1) + b1) - dummy_transform_position.y, 0);
+                                    Debug.Log("aaaa" + (motion_processing.scriptcol_y.y - b1) / a1);
+                                    set_dummy_transform_position(true, change_col_to_pos_x((motion_processing.scriptcol_y.y - b1) / a1), true, change_col_to_pos_y(a1 * ((motion_processing.scriptcol_y.y - b1) / a1) + b1));
+                                    square_ground_wall_up[count - 1] = true;
+                                }
+                            }
+                            else if ((motion_processing.scriptcol_y.y - b1) / a1 < befor_scriptcol_x.x && (motion_processing.scriptcol_y.y - b1) / a1 >= scriptcol_x.x)//進む方向が負
+                            {
+                                //Debug.Log("ea3");
+                                set_dummy_transform_position(true, change_col_to_pos_x((motion_processing.scriptcol_y.y - b1) / a1), true, change_col_to_pos_y(a1 * ((motion_processing.scriptcol_y.y - b1) / a1) + b1));
+                                square_ground_wall_up[count - 1] = true;
+                            }
+
+                            //if (square_ground_wall_up[count - 1])
+                            //{
+                            //    //Debug.Log("ea2");
+                            //    //dummy_transform_position += new Vector3((((motion_processing.scriptcol_y.y - scriptcol_y.x) - b1) / a1), motion_processing.scriptcol_y.y - scriptcol_y.x, 0);
+                            //}
+                        }//ぶつかったかどうか、移動はまだ
+                        else
+                        {
+                            Debug.Log("ea1");
+                            //dummy_transform_position += new Vector3(0, motion_processing.scriptcol_y.y - scriptcol_y.x, 0);
+                            set_dummy_transform_position(false, 0, true, a1 * dummy_transform_position.x + b1);
+                            square_ground_wall_up[count - 1] = true;
+                        }
+                    }
+                }
+
+                set_cols();
+
+                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && touch_left == false && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
+                {
+                    //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);//y座標が修正されてない
+                    //square_ground_wall_right[count - 1] = true;
+                    //local_savepos = new Vector2(motion_processing.scriptcol_x.y, a1 * motion_processing.scriptcol_x.y + b1);
+
+                    Debug.Log("ea");
+
+
+                    
+                    //if ()
+                    {
+                        dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
+                        square_ground_wall_right[count - 1] = true;
+                    }
+                }
+
+                set_cols();
+
+                if ((a3 * motion_processing.scriptcol_x.y + b3) >= motion_processing.scriptcol_y.y && (a3 * motion_processing.scriptcol_x.y + b3) <= motion_processing.scriptcol_y.x && touch_left == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側下ぶつかる
                 {
                     dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                     square_ground_wall_right[count - 1] = true;
                 }
 
-                if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && touch_right == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
+                set_cols();
+
+                if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && touch_right == false && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
                 {
                     dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
                     square_ground_wall_left[count - 1] = true;
-                    //Debug.Log("working1");
+                    Debug.Log("working1");
                 }
+
+                set_cols();
+
+                if ((a4 * motion_processing.scriptcol_x.x + b4) >= motion_processing.scriptcol_y.y && (a4 * motion_processing.scriptcol_x.x + b4) <= motion_processing.scriptcol_y.x && touch_right == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側下ぶつかる
+                {
+                    dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
+                    square_ground_wall_left[count - 1] = true;
+                }
+
+
+                
+            }
+            else if (is_y_0 == true && dummy_transform_position.y != befor_transform_position.y)
+            {
+                //if (motion_processing.scriptcol_y.y > befor_scriptcol_y.x && motion_processing.scriptcol_y.y <= scriptcol_y.x && (motion_processing.scriptcol_y.y - b1) / a1 > motion_processing.scriptcol_x.y && (motion_processing.scriptcol_y.y - b1) / a1 < motion_processing.scriptcol_x.x && befor_transform_position.y - dummy_transform_position.y < 0)//先にぶつかったのは横か縦か-相手の下面-
+                //{
+                //    Debug.Log("ea1");
+                //    //dummy_transform_position += new Vector3(0, motion_processing.scriptcol_y.y - scriptcol_y.x, 0);
+                //    set_dummy_transform_position(false, 0, true, a1 * dummy_transform_position.x + b1);
+                //    square_ground_wall_up[count - 1] = true;
+                //}
             }
 
             set_cols();
 
-            if (square_ground_wall_right[count - 1] == false && scriptcol_x.x == motion_processing.scriptcol_x.y)
+            if (square_ground_wall_right[count - 1] == false && scriptcol_x.x == motion_processing.scriptcol_x.y && motion_processing.scriptcol_y.x > scriptcol_y.y && motion_processing.scriptcol_y.y < scriptcol_y.x)
             {
                 dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 square_ground_wall_right[count - 1] = true;
                 //Debug.Log("hello-");
             }
-            if (square_ground_wall_left[count - 1] == false && scriptcol_x.y == motion_processing.scriptcol_x.x)
+            if (square_ground_wall_left[count - 1] == false && scriptcol_x.y == motion_processing.scriptcol_x.x && motion_processing.scriptcol_y.x > scriptcol_y.y && motion_processing.scriptcol_y.y < scriptcol_y.x)
             {
                 dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 square_ground_wall_left[count - 1] = true;
@@ -370,6 +490,7 @@ public class motion : MonoBehaviour
                     if (movementvalue.x < 0)
                     {
                         dummy_transform_position.x -= movementvalue.x;
+                        //Debug.Log("hhh");
                         movementvalue.x = 0;
                     }
                     //Debug.Log("touched");
@@ -389,6 +510,12 @@ public class motion : MonoBehaviour
                 if (true_ > 0)
                 {
                     touch_right = true;
+                    if (movementvalue.x > 0)
+                    {
+                        dummy_transform_position.x -= movementvalue.x;
+                        movementvalue.x = 0;
+                    }
+                    
                 }
                 else touch_right = false;
             }
@@ -405,6 +532,7 @@ public class motion : MonoBehaviour
                 if (true_ > 0)
                 {
                     touch_up = true;
+                    movementvalue.y = 0;
                 }
                 else touch_up = false;
             }
@@ -421,6 +549,7 @@ public class motion : MonoBehaviour
                 if (true_ > 0)
                 {
                     touch_down = true;
+                    movementvalue.x = 0;
                 }
                 else touch_down = false;
             }
@@ -509,7 +638,7 @@ public class motion : MonoBehaviour
             a4 = 0;
 
             check += 1;
-            is_x_0 = true;
+            is_y_0 = true;
         }
         if (dummy_transform_position.y == befor_transform_position.y)
         {
@@ -526,7 +655,7 @@ public class motion : MonoBehaviour
             a4 = -1;
 
             check += 1;
-            is_y_0 = true;
+            is_x_0 = true;
             //Debug.Log("trueed");
         }
 
@@ -542,8 +671,40 @@ public class motion : MonoBehaviour
             b3 = scriptcol_y.y - (a3 * scriptcol_x.x);
             b4 = scriptcol_y.y - (a4 * scriptcol_x.y);
 
-            is_y_0 = false;
+            is_x_0 = false;
         }
+    }
+
+    public void set_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0)
+    {
+        //set x
+        if (absolute_x) dummy_transform_position.x = x;
+        else dummy_transform_position.x += x;
+
+        //set y
+        if (absolute_y) dummy_transform_position.y = y;
+        else dummy_transform_position.y += y;
+
+        //set z
+        if (absolute_z) dummy_transform_position.z = z;
+        else dummy_transform_position.z += z;
+    }
+
+    //    (dummy_transform_position.x + (box2d.size.x* (transform.localScale.x* 0.5f)))
+
+    //dummy.x + box2d.s.x(0.5*trans.s.x)=a
+    //dummy.x + box2d.s.x((trans.s.x)/2)=a
+    //dummy.x + ((box2d.s.x * trans.s.x)/2)=a
+    //dummy.x = a - ((box2d.s.x * trans.s.x)/2)
+
+    public float change_col_to_pos_x(float colx)
+    {
+        return colx - ((box2d.size.x * transform.localScale.x) / 2);
+    }
+
+    public float change_col_to_pos_y(float coly)
+    {
+        return coly - ((box2d.size.y * transform.localScale.y) / 2);
     }
 
     void colcount()
