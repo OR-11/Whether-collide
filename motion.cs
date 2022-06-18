@@ -353,7 +353,6 @@ public class motion : MonoBehaviour
                 //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);
                 square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
-                //Debug.Log("Hiiiiiiii");
             }
             if (square_ground_wall_left[count - 1] && square_ground_wall_up[count - 1] == false && square_ground_wall_down[count - 1] == false && motion_processing.scriptcol_x.x > scriptcol_x.y)//左側
             {
@@ -462,15 +461,9 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                //if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//上面か下面
                 {
-                    //Debug.Log("hello" + "" + (scriptcol_y.y > befor_scriptcol_y.x) + "" + (scriptcol_y.y <= scriptcol_y.x) + "" + ((motion_processing.scriptcol_y.y - b1) / a1 > motion_processing.scriptcol_x.y) + "" + ((motion_processing.scriptcol_y.y - b1) / a1 < motion_processing.scriptcol_x.x) + ((motion_processing.scriptcol_y.y - b1) / a1) + (befor_transform_position.y - dummy_transform_position.y < 0));
-                    //if (motion_processing.scriptcol_x.y < scriptcol_x.x && motion_processing.scriptcol_y.y < scriptcol_y.x) UnityEditor.EditorApplication.isPaused = true;
-
                     if (motion_processing.scriptcol_y.y > befor_scriptcol_y.x && motion_processing.scriptcol_y.y <= scriptcol_y.x && (motion_processing.scriptcol_y.y - b1) / a1 > motion_processing.scriptcol_x.y && (motion_processing.scriptcol_y.y - b1) / a1 < motion_processing.scriptcol_x.x && befor_transform_position.y - dummy_transform_position.y < 0)//先にぶつかったのは横か縦か-相手の下面-(a1/右側上)
                     {
-                        //Debug.Log("he" + (((motion_processing.scriptcol_y.y - b1) / a1) - dummy_transform_position.x));
-
                         if (befor_transform_position.x - dummy_transform_position.x != 0)
                         {
                             if (befor_transform_position.x - dummy_transform_position.x < 0)//進む方向が正
@@ -608,13 +601,13 @@ public class motion : MonoBehaviour
                     {
                         if (befor_transform_position.x - dummy_transform_position.x != 0)
                         {
+                            //
                             if (befor_transform_position.x - dummy_transform_position.x < 0)//進む方向が正
                             {
+                                //
                                 if ((motion_processing.scriptcol_y.x - b4) / a4 > befor_scriptcol_x.x && (motion_processing.scriptcol_y.x - b4) / a4 <= scriptcol_x.x)
                                 {
-                                    //dummy_transform_position += new Vector3(((motion_processing.scriptcol_y.y - b1) / a1) - dummy_transform_position.x, (a1 * ((motion_processing.scriptcol_y.y - b1) / a1) + b1) - dummy_transform_position.y, 0);
-                                    //Debug.Log("aaaa" + (motion_processing.scriptcol_y.y - b2) / a2);
-
+                                    Debug.Log("iiiii");
                                     if (stop_when_this_collide)
                                     {
                                         //set_dummy_transform_position(true, change_col_to_pos_x((motion_processing.scriptcol_y.y - b2) / a2), true, change_col_to_pos_y(a2 * ((motion_processing.scriptcol_y.y - b2) / a2) + b2));
@@ -650,12 +643,8 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && touch_left == false && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
+                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
                 {
-                    //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);//y座標が修正されてない
-                    //square_ground_wall_right[count - 1] = true;
-                    //local_savepos = new Vector2(motion_processing.scriptcol_x.y, a1 * motion_processing.scriptcol_x.y + b1);
-
                     Debug.Log("ea");
 
 
@@ -671,7 +660,7 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                if ((a3 * motion_processing.scriptcol_x.y + b3) >= motion_processing.scriptcol_y.y && (a3 * motion_processing.scriptcol_x.y + b3) <= motion_processing.scriptcol_y.x && touch_left == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側下ぶつかる
+                if ((a3 * motion_processing.scriptcol_x.y + b3) >= motion_processing.scriptcol_y.y && (a3 * motion_processing.scriptcol_x.y + b3) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側下ぶつかる
                 {
                     //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                     //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);
@@ -681,7 +670,7 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && touch_right == false && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
+                if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
                 {
                     //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
                     //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
@@ -692,7 +681,7 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                if ((a4 * motion_processing.scriptcol_x.x + b4) >= motion_processing.scriptcol_y.y && (a4 * motion_processing.scriptcol_x.x + b4) <= motion_processing.scriptcol_y.x && touch_right == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側下ぶつかる
+                if ((a4 * motion_processing.scriptcol_x.x + b4) >= motion_processing.scriptcol_y.y && (a4 * motion_processing.scriptcol_x.x + b4) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側下ぶつかる
                 {
                     //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
                     //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
@@ -721,7 +710,8 @@ public class motion : MonoBehaviour
 
                 if (motion_processing.scriptcol_y.x < befor_scriptcol_y.y && motion_processing.scriptcol_y.x >= scriptcol_y.y && motion_processing.scriptcol_x.y < scriptcol_x.x && motion_processing.scriptcol_x.x > scriptcol_x.y)//先にぶつかったのは横か縦か-相手の上面-
                 {
-                    set_dummy_transform_position(false, 0, true, change_col_to_pos_y(motion_processing.scriptcol_y.x, false));
+                    //set_dummy_transform_position(false, 0, true, change_col_to_pos_y(motion_processing.scriptcol_y.x, false));
+                    square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
                     square_ground_wall_down[count - 1] = true;
                 }
             }
@@ -751,6 +741,7 @@ public class motion : MonoBehaviour
             }
             if (square_ground_wall_down[count - 1] == false && scriptcol_y.y == motion_processing.scriptcol_y.x && motion_processing.scriptcol_x.x > scriptcol_x.y && motion_processing.scriptcol_x.y < scriptcol_x.x)
             {
+                square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
                 square_ground_wall_down[count - 1] = true;
             }
 
