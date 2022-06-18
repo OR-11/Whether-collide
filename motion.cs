@@ -23,6 +23,8 @@ public class motion : MonoBehaviour
 
     public Vector2 movementvalue;
 
+    Vector2 mysize;
+
     public Vector3 dummy_transform_position;
     public Vector3 befor_transform_position;
 
@@ -161,6 +163,7 @@ public class motion : MonoBehaviour
 
         scriptcol_x = new Vector2((dummy_transform_position.x + (box2d.size.x * (transform.localScale.x * 0.5f))), (dummy_transform_position.x + (-box2d.size.x * (transform.localScale.x * 0.5f))));
         scriptcol_y = new Vector2((dummy_transform_position.y + (box2d.size.y * (transform.localScale.y * 0.5f))), (dummy_transform_position.y + (-box2d.size.y * (transform.localScale.y * 0.5f))));
+        mysize = transform.localScale;
 
         if (Input.GetKey(KeyCode.Space) && debuging) movement(new Vector2(-10, 0), true);
         else movement(new Vector2(0, 0), false);
@@ -283,10 +286,12 @@ public class motion : MonoBehaviour
         }
 
         motion motion_processing;
+        Vector2 motion_TransSize;
 
         while (count > 0)
         {
             motion_processing = grounds[count - 1].GetComponent<motion>();
+            motion_TransSize = grounds[count - 1].transform.localScale;
 
             if (Input.GetKey(KeyCode.D) && debuging) Debug.Log(motion_processing + "" + Mathf.Approximately(motion_processing.scriptcol_x.x, scriptcol_x.y));
 
@@ -605,9 +610,8 @@ public class motion : MonoBehaviour
                             if (befor_transform_position.x - dummy_transform_position.x < 0)//進む方向が正
                             {
                                 //
-                                if ((motion_processing.scriptcol_y.x - b4) / a4 > befor_scriptcol_x.x && (motion_processing.scriptcol_y.x - b4) / a4 <= scriptcol_x.x)
+                                if ((motion_processing.scriptcol_y.x - b4) / a4 > befor_scriptcol_x.y && (motion_processing.scriptcol_y.x - b4) / a4 <= scriptcol_x.y)
                                 {
-                                    Debug.Log("iiiii");
                                     if (stop_when_this_collide)
                                     {
                                         //set_dummy_transform_position(true, change_col_to_pos_x((motion_processing.scriptcol_y.y - b2) / a2), true, change_col_to_pos_y(a2 * ((motion_processing.scriptcol_y.y - b2) / a2) + b2));
@@ -621,7 +625,7 @@ public class motion : MonoBehaviour
                                     square_ground_wall_down[count - 1] = true;
                                 }
                             }
-                            else if ((motion_processing.scriptcol_y.x - b4) / a4 < befor_scriptcol_x.x && (motion_processing.scriptcol_y.x - b4) / a4 >= scriptcol_x.x)//進む方向が負
+                            else if ((motion_processing.scriptcol_y.x - b4) / a4 < befor_scriptcol_x.y && (motion_processing.scriptcol_y.x - b4) / a4 >= scriptcol_x.y)//進む方向が負
                             {
                                 //Debug.Log("ea3");
 
@@ -642,6 +646,11 @@ public class motion : MonoBehaviour
                 }
 
                 set_cols();
+
+                if (motion_TransSize.y == mysize.y)
+                {
+
+                }
 
                 if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
                 {
