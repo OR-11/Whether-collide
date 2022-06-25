@@ -8,6 +8,8 @@ public class motion : MonoBehaviour
 {
     public bool debuging;
 
+    public bool only_whether_touch;
+
     public bool ground;
 
     public bool stop_when_this_collide;
@@ -76,15 +78,15 @@ public class motion : MonoBehaviour
 
     public bool touch_down;
 
-    int times_touching_right;
+    public GameObject[] touching_right;
 
-    int times_touching_left;
+    public GameObject[] touching_left;
 
-    int times_touching_up;
+    public GameObject[] touching_up;
 
-    int times_touching_down;
+    public GameObject[] touching_down;
 
-    int debugcount;
+    public GameObject[] touching;
 
     //自作コリダーたち
     //変数準備
@@ -293,7 +295,12 @@ public class motion : MonoBehaviour
             motion_processing = grounds[count - 1].GetComponent<motion>();
             motion_TransSize = grounds[count - 1].transform.localScale;
 
-            if (Input.GetKey(KeyCode.D) && debuging) Debug.Log(motion_processing + "" + Mathf.Approximately(motion_processing.scriptcol_x.x, scriptcol_x.y));
+            square_ground_wall_left[count - 1] = false;
+            square_ground_wall_right[count - 1] = false;
+            square_ground_wall_up[count - 1] = false;
+            square_ground_wall_down[count - 1] = false;
+
+            //if (Input.GetKey(KeyCode.D) && debuging) Debug.Log(motion_processing + "" + Mathf.Approximately(motion_processing.scriptcol_x.x, scriptcol_x.y));
 
             //{//動いていないときの判定//使ってない
             //    if (dummy_transform_position.x == befor_transform_position.x && dummy_transform_position.y == befor_transform_position.x)
@@ -358,22 +365,27 @@ public class motion : MonoBehaviour
                 //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);
                 square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
+                square_ground_wall_right[count - 1] = true;
             }
             if (square_ground_wall_left[count - 1] && square_ground_wall_up[count - 1] == false && square_ground_wall_down[count - 1] == false && motion_processing.scriptcol_x.x > scriptcol_x.y)//左側
             {
                 //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
                 //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
                 square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
+                square_ground_wall_left[count - 1] = true;
+                Debug.Log("1");
             }
             if (square_ground_wall_up[count - 1] && square_ground_wall_left[count - 1] == false && square_ground_wall_right[count - 1] == false && motion_processing.scriptcol_y.y < scriptcol_y.x)//上側
             {
                 //set_dummy_transform_position(false, 0, true, change_col_to_pos_y(motion_processing.scriptcol_y.y));
                 square_ground_wall_up_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.y - befor_scriptcol_y.x);
+                square_ground_wall_up[count - 1] = true;
             }
             if (square_ground_wall_down[count - 1] && square_ground_wall_left[count - 1] == false && square_ground_wall_right[count - 1] == false && motion_processing.scriptcol_y.x > scriptcol_y.y)//下側
             {
                 //set_dummy_transform_position(false, 0, true, change_col_to_pos_y(motion_processing.scriptcol_y.x, false));
                 square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
+                square_ground_wall_down[count - 1] = true;
             }
             
 
@@ -386,7 +398,7 @@ public class motion : MonoBehaviour
 
                 if (dummy_transform_position.x - befor_transform_position.x > 0)//右
                 {
-                    if ((Mathf.Approximately(scriptcol_x.x, motion_processing.scriptcol_x.y) || scriptcol_x.x > motion_processing.scriptcol_x.y) && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && touch_left == false && scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)
+                    if ((Mathf.Approximately(scriptcol_x.x, motion_processing.scriptcol_x.y) || scriptcol_x.x > motion_processing.scriptcol_x.y) && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)
                     {
                         square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
                         //square_ground_wall_right_distance_object[count - 1] = grounds[count - 1];
@@ -397,13 +409,14 @@ public class motion : MonoBehaviour
 
                 if (dummy_transform_position.x - befor_transform_position.x < 0)//左
                 {
-                    if ((Mathf.Approximately(scriptcol_x.y, motion_processing.scriptcol_x.x) || scriptcol_x.y < motion_processing.scriptcol_x.x) && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && touch_right == false && scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)
+                    if ((Mathf.Approximately(scriptcol_x.y, motion_processing.scriptcol_x.x) || scriptcol_x.y < motion_processing.scriptcol_x.x) && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)
                     {
                         square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
                         //square_ground_wall_right_distance_object[count - 1] = grounds[count - 1];
                         square_ground_wall_left[count - 1] = true;
+                        Debug.Log("2");
                     }
-                    else square_ground_wall_right[count - 1] = false;
+                    else square_ground_wall_left[count - 1] = false;
                 }
 
 
@@ -647,59 +660,73 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                if (motion_TransSize.y == mysize.y)
+                if (motion_TransSize.y >= mysize.y || Mathf.Approximately(motion_TransSize.y, mysize.y))//相手のほうが大きいまたは同じサイズ
                 {
-
-                }
-
-                if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
-                {
-                    Debug.Log("ea");
+                    if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
+                    {
+                        Debug.Log("ea");
 
 
-                    
-                    //if ()
+
+                        //if ()
+                        {
+                            //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
+                            //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);//true, change_col_to_pos_y(a1 * motion_processing.scriptcol_x.y + b1));
+                            square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
+                            square_ground_wall_right[count - 1] = true;
+                        }
+                    }
+
+
+                    set_cols();
+
+                    if ((a3 * motion_processing.scriptcol_x.y + b3) >= motion_processing.scriptcol_y.y && (a3 * motion_processing.scriptcol_x.y + b3) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側下ぶつかる
                     {
                         //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
-                        //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);//true, change_col_to_pos_y(a1 * motion_processing.scriptcol_x.y + b1));
+                        //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);
+                        square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
+                        square_ground_wall_right[count - 1] = true;
+                    }
+
+                    set_cols();
+
+                    if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
+                    {
+                        //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
+                        //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
+                        square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
+                        square_ground_wall_left[count - 1] = true;
+                        Debug.Log("working1");
+                    }
+
+                    set_cols();
+
+                    if ((a4 * motion_processing.scriptcol_x.x + b4) >= motion_processing.scriptcol_y.y && (a4 * motion_processing.scriptcol_x.x + b4) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側下ぶつかる
+                    {
+                        //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
+                        //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
+                        square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
+                        square_ground_wall_left[count - 1] = true;
+                        Debug.Log("3");
+                    }
+                }
+                else//自分のほうが大きい
+                {
+                    //左
+                    if ((a2 * motion_processing.scriptcol_x.x + b2) > motion_processing.scriptcol_y.y && (a4 * motion_processing.scriptcol_x.x + b4) < motion_processing.scriptcol_y.x && motion_processing.scriptcol_x.x < befor_scriptcol_x.y && motion_processing.scriptcol_x.x > scriptcol_x.y)
+                    {
+                        square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
+                        square_ground_wall_left[count - 1] = true;
+                        Debug.Log("4");
+                    }
+
+                    //右
+                    if ((a1 * motion_processing.scriptcol_x.y + b1) > motion_processing.scriptcol_y.y && (a3 * motion_processing.scriptcol_x.y + b3) < motion_processing.scriptcol_y.x && motion_processing.scriptcol_x.y > befor_scriptcol_x.x && motion_processing.scriptcol_x.y < scriptcol_x.x)
+                    {
                         square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
                         square_ground_wall_right[count - 1] = true;
                     }
                 }
-
-                set_cols();
-
-                if ((a3 * motion_processing.scriptcol_x.y + b3) >= motion_processing.scriptcol_y.y && (a3 * motion_processing.scriptcol_x.y + b3) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側下ぶつかる
-                {
-                    //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
-                    //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);
-                    square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
-                    square_ground_wall_right[count - 1] = true;
-                }
-
-                set_cols();
-
-                if ((a2 * motion_processing.scriptcol_x.x + b2) >= motion_processing.scriptcol_y.y && (a2 * motion_processing.scriptcol_x.x + b2) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側上ぶつかる
-                {
-                    //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
-                    //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
-                    square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
-                    square_ground_wall_left[count - 1] = true;
-                    Debug.Log("working1");
-                }
-
-                set_cols();
-
-                if ((a4 * motion_processing.scriptcol_x.x + b4) >= motion_processing.scriptcol_y.y && (a4 * motion_processing.scriptcol_x.x + b4) <= motion_processing.scriptcol_y.x && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && scriptcol_x.y <= motion_processing.scriptcol_x.x)//左側下ぶつかる
-                {
-                    //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.x + -scriptcol_x.y, 0, 0);
-                    //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
-                    square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
-                    square_ground_wall_left[count - 1] = true;
-                }
-
-
-                
             }
             else if (is_y_0 == true && dummy_transform_position.y != befor_transform_position.y && dummy_transform_position.x == befor_transform_position.x)//上下移動のみ
             {
@@ -741,7 +768,7 @@ public class motion : MonoBehaviour
                 //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
                 square_ground_wall_left_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.x - befor_scriptcol_x.y);
                 square_ground_wall_left[count - 1] = true;
-                //Debug.Log("hello-");
+                //Debug.Log("5");
             }
             if (square_ground_wall_up[count - 1] == false && scriptcol_y.x == motion_processing.scriptcol_y.y && motion_processing.scriptcol_x.x > scriptcol_x.y && motion_processing.scriptcol_x.y < scriptcol_x.x)
             {
@@ -767,24 +794,21 @@ public class motion : MonoBehaviour
 
                 float distance = Mathf.Min(square_ground_wall_right_distance);
                 int count_;
-                Debug.Log(square_ground_wall_right_distance + "" + distance);
+
                 if (distance != Mathf.Infinity)
                 {
                     count_ = ArrayUtility.IndexOf(square_ground_wall_right_distance, distance);
-                    //try
-                    //{
-                    set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
-                    touch_right = true;
+
+                    if (!only_whether_touch)
+                    {
+                        set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
+                        touch_right = true;
+                    }
 
                     if (0 < movementvalue.x)
                     {
                         movementvalue.x = 0;
                     }
-                    //}
-                    //catch (IndexOutOfRangeException)
-                    //{
-                    //    //Doing nothing
-                    //}
                 }
             }
 
@@ -804,21 +828,17 @@ public class motion : MonoBehaviour
                 if (distance != Mathf.Infinity)
                 {
                     count_ = ArrayUtility.IndexOf(square_ground_wall_left_distance, distance);
-                    //try
-                    //{
-                    set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false), false, 0);
-                    Debug.Log("ab" + (grounds[count_].GetComponent<motion>().scriptcol_x.x - scriptcol_x.y));
-                    touch_left = true;
+
+                    if (!only_whether_touch)
+                    {
+                        set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false), false, 0);
+                        touch_left = true;
+                    }
 
                     if (movementvalue.x < 0)
                     {
                         movementvalue.x = 0;
                     }
-                    //}
-                    //catch (IndexOutOfRangeException)
-                    //{
-                    //    //Doing nothing
-                    //}
                 }
             }
 
@@ -834,24 +854,21 @@ public class motion : MonoBehaviour
 
                 float distance = Mathf.Min(square_ground_wall_up_distance);
                 int count_;
-                Debug.Log(square_ground_wall_up_distance + "" + distance);
+                
                 if (distance != Mathf.Infinity)
                 {
                     count_ = ArrayUtility.IndexOf(square_ground_wall_up_distance, distance);
-                    //try
-                    //{
-                    set_dummy_transform_position(false, 0, true, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.y));
-                    touch_up = true;
+
+                    if (!only_whether_touch)
+                    {
+                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.y));
+                        touch_up = true;
+                    }
 
                     if (0 < movementvalue.y)
                     {
                         movementvalue.y = 0;
                     }
-                    //}
-                    //catch (IndexOutOfRangeException)
-                    //{
-                    //    //Doing nothing
-                    //}
                 }
             }
 
@@ -867,24 +884,20 @@ public class motion : MonoBehaviour
 
                 float distance = Mathf.Min(square_ground_wall_down_distance);
                 int count_;
-                Debug.Log(square_ground_wall_down_distance + "" + distance);
                 if (distance != Mathf.Infinity)
                 {
                     count_ = ArrayUtility.IndexOf(square_ground_wall_down_distance, distance);
-                    //try
-                    //{
-                    set_dummy_transform_position(false, 0, true, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.x, false));
-                    touch_down = true;
+
+                    if (!only_whether_touch)
+                    {
+                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.x, false));
+                        touch_down = true;
+                    }
 
                     if (0 > movementvalue.y)
                     {
                         movementvalue.y = 0;
                     }
-                    //}
-                    //catch (IndexOutOfRangeException)
-                    //{
-                    //    //Doing nothing
-                    //}
                 }
             }
 
@@ -892,86 +905,149 @@ public class motion : MonoBehaviour
             {
                 touch_down = false;
             }
-            //for (int count_ = square_ground_wall_left.Length; count_ > 0; --count_)//オブジェクト左側
-            //{
-            //    //Debug.Log(count + square_ground_wall_left[count - 1].ToString());
-            //    if (square_ground_wall_left[count_ - 1] == true)
-            //    {
-            //        true_ += 1;
-            //    }
-
-            //    if (true_ > 0)
-            //    {
-            //        touch_left = true;
-            //        if (movementvalue.x < 0)
-            //        {
-            //            //dummy_transform_position.x -= movementvalue.x;
-            //            //Debug.Log("hhh");
-            //            movementvalue.x = 0;
-            //        }
-            //        //Debug.Log("touched");
-            //    }
-            //    else touch_left = false;
-            //}
-
-            //true_ = 0;
-
-            //for (int count_ = square_ground_wall_right.Length; count_ > 0; --count_)//オブジェクト右側
-            //{
-            //    if (square_ground_wall_right[count_ - 1] == true)
-            //    {
-            //        true_ += 1;
-            //    }
-
-            //    if (true_ > 0)
-            //    {
-            //        touch_right = true;
-            //        if (movementvalue.x > 0)
-            //        {
-            //            //dummy_transform_position.x -= movementvalue.x;
-            //            movementvalue.x = 0;
-            //        }
-                    
-            //    }
-            //    else touch_right = false;
-            //}
-
-            //true_ = 0;
-
-            //for (int count_ = square_ground_wall_up.Length; count_ > 0; --count_)//オブジェクト上側
-            //{
-            //    if (square_ground_wall_up[count_ - 1] == true)
-            //    {
-            //        true_ += 1;
-            //    }
-
-            //    if (true_ > 0)
-            //    {
-            //        touch_up = true;
-            //        movementvalue.y = 0;
-            //    }
-            //    else touch_up = false;
-            //}
-
-            //true_ = 0;
-
-            //for (int count_ = square_ground_wall_down.Length; count_ > 0; --count_)//オブジェクト下側
-            //{
-            //    if (square_ground_wall_down[count_ - 1] == true)
-            //    {
-            //        true_ += 1;
-            //    }
-
-            //    if (true_ > 0)
-            //    {
-            //        touch_down = true;
-            //        movementvalue.x = 0;
-            //    }
-            //    else touch_down = false;
-            //}
 
             if (touch_down || touch_left || touch_right || touch_up) touching_something = true;
             else touching_something = false;
+
+            for (int count_ = touching_down.Length; count_ > 0; --count_)
+            {
+                touching_down[count_ - 1] = null;
+            }
+            for (int count_ = touching_up.Length; count_ > 0; --count_)
+            {
+                touching_up[count_ - 1] = null;
+            }
+            for (int count_ = touching_right.Length; count_ > 0; --count_)
+            {
+                touching_right[count_ - 1] = null;
+            }
+            for (int count_ = touching_left.Length; count_ > 0; --count_)
+            {
+                touching_left[count_ - 1] = null;
+            }
+
+            int putcount = 0;
+            int storecount = 0;
+
+
+            for (int count__ = square_ground_wall_down.Length; count__ > 0; --count__)
+            {
+                if (square_ground_wall_down[count__ - 1]) putcount += 1;
+            }
+
+            touching_down = new GameObject[putcount];
+            putcount = 0;
+
+            for (int count__ = square_ground_wall_up.Length; count__ > 0; --count__)
+            {
+                if (square_ground_wall_up[count__ - 1]) putcount += 1;
+            }
+
+            touching_up = new GameObject[putcount];
+            putcount = 0;
+
+            for (int count__ = square_ground_wall_right.Length; count__ > 0; --count__)
+            {
+                if (square_ground_wall_right[count__ - 1]) putcount += 1;
+            }
+
+            touching_right = new GameObject[putcount];
+            putcount = 0;
+
+            for (int count__ = square_ground_wall_left.Length; count__ > 0; --count__)
+            {
+                if (square_ground_wall_left[count__ - 1]) putcount += 1;
+            }
+
+            touching_left = new GameObject[putcount];
+            putcount = 0;
+
+
+            if (touching_something)
+            {
+                for (int cc = square_ground_wall_down.Length; cc > 0; --cc)
+                {
+                    if (square_ground_wall_down[cc - 1])
+                    {
+                        touching_down[putcount] = grounds[cc - 1];
+                        putcount += 1;
+                    }
+                }
+
+                storecount += putcount;
+                putcount = 0;
+
+                for (int cc = square_ground_wall_up.Length; cc > 0; --cc)
+                {
+                    if (square_ground_wall_up[cc - 1])
+                    {
+                        touching_up[putcount] = grounds[cc - 1];
+                        putcount += 1;
+                    }
+                }
+
+                storecount += putcount;
+                putcount = 0;
+
+                for (int cc = square_ground_wall_left.Length; cc > 0; --cc)
+                {
+                    if (square_ground_wall_left[cc - 1])
+                    {
+                        touching_left[putcount] = grounds[cc - 1];
+                        putcount += 1;
+                    }
+                }
+
+                storecount += putcount;
+                putcount = 0;
+
+                for (int cc = square_ground_wall_right.Length; cc > 0; --cc)
+                {
+                    if (square_ground_wall_right[cc - 1])
+                    {
+                        touching_right[putcount] = grounds[cc - 1];
+                        putcount += 1;
+                    }
+                }
+
+                storecount += putcount;
+                putcount = 0;
+
+                touching = new GameObject[storecount];
+
+                if (storecount > 0)
+                {
+                    storecount = 0;
+                    for (int cc = touching_down.Length; cc > 0; --cc)
+                    {
+                        //if (touching_down[cc - 1] != null) 
+                        touching[storecount + cc - 1] = touching_down[cc - 1];
+                    }
+
+                    storecount += touching_down.Length;
+
+                    for (int cc = touching_up.Length; cc > 0; --cc)
+                    {
+                        touching[storecount + cc - 1] = touching_up[cc - 1];
+                    }
+
+                    storecount += touching_up.Length;
+
+                    for (int cc = touching_right.Length; cc > 0; --cc)
+                    {
+                        touching[storecount + cc - 1] = touching_right[cc - 1];
+                    }
+
+                    storecount += touching_right.Length;
+
+                    for (int cc = touching_left.Length; cc > 0; --cc)
+                    {
+                        touching[storecount + cc - 1] = touching_left[cc - 1];
+                    }
+                }
+                //storecount += touching_left.Length;
+            }
+            else touching = new GameObject[0];
         }
     }
 
@@ -989,7 +1065,7 @@ public class motion : MonoBehaviour
             }
             else numplus_x = false;
 
-            if (movementvalue.x == 0.3f) Debug.Log("go right");
+            //if (movementvalue.x == 0.3f) Debug.Log("go right");
         }
 
         if (touch_left && movementvalue.x < 0) movementvalue.x = 0;
@@ -1009,7 +1085,7 @@ public class motion : MonoBehaviour
             else movementvalue.x += Air_resistance;
 
             if (plus == true && numplus_x == true && movementvalue.x < 0) movementvalue.x = 0;
-            if (plus == true && numplus_x == false && movementvalue.x > 0) movementvalue.x = 0;
+            if (plus == true && numplus_x == false && movementvalue.x > 0) Debug.Log("d");//movementvalue.x = 0;
             //if (plus == false && movementvalue.x > 0) movementvalue.x = 0;
         }
 
@@ -1111,6 +1187,31 @@ public class motion : MonoBehaviour
         do_dummy_transform_position_to_set_execute = true;
     }
 
+    public bool is_touching(GameObject something)
+    {
+        if (ArrayUtility.Contains(touching, something))
+        {
+            return true;
+        }
+        else return false;
+    }
+
+    public bool searching_object_withTag(string tag)
+    {
+        int c = 0;
+        for (int count__ = touching.Length; count__ > 0; --count__)
+        {
+            if (touching[count__ - 1].tag == tag) c += 1;
+        }
+        if (c > 0) return true;
+        else return false;
+    }
+
+    public GameObject touching_Object(int num)
+    {
+        return touching[num];
+    }
+
     void set_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0)//, bool movinig_without_col = false)
     {
         //set x
@@ -1185,6 +1286,16 @@ public class motion : MonoBehaviour
         square_ground_wall_right_distance = new float[grounds.Length];
 
         square_ground_wall_left_distance = new float[grounds.Length];
+
+        touching = new GameObject[grounds.Length];
+
+        touching_down = new GameObject[grounds.Length];
+
+        touching_up = new GameObject[grounds.Length];
+
+        touching_right = new GameObject[grounds.Length];
+
+        touching_left = new GameObject[grounds.Length];
     }
 
     void drowline(Vector3 start, Vector3 end)
