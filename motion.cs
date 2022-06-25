@@ -6,7 +6,7 @@ using System;
 
 public class motion : MonoBehaviour
 {
-    public bool debuging;
+    public bool debuging_;
 
     public bool only_whether_touch;
 
