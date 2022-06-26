@@ -1069,7 +1069,7 @@ public class motion : MonoBehaviour
         }
 
         if (touch_left && movementvalue.x < 0) movementvalue.x = 0;
-        if (touch_right && movementvalue.x > 0) debuging.Log("movementvalue.x = 0");
+        if (touch_right && movementvalue.x > 0) movementvalue.x = 0;
         if (touch_down && movementvalue.y < 0) movementvalue.y = 0;
         if (touch_up && movementvalue.y > 0) movementvalue.y = 0;
 
