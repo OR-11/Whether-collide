@@ -1073,7 +1073,8 @@ public class motion : MonoBehaviour
         if (touch_down && movementvalue.y < 0) movementvalue.y = 0;
         if (touch_up && movementvalue.y > 0) movementvalue.y = 0;
 
-        dummy_transform_position += new Vector3(movementvalue.x, movementvalue.y, 0);
+        //dummy_transform_position += new Vector3(movementvalue.x, movementvalue.y, 0);
+        if (movementvalue.x != 1 || movementvalue.y != 0) change_dummy_transform_position(false, movementvalue.x, false, movementvalue.y);
         if (Air_resistance != 0)
         {
             bool plus;
@@ -1169,7 +1170,7 @@ public class motion : MonoBehaviour
 
     public void change_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0, bool movinig_without_col = false)
     {
-        dummy_transform_position_to_set = dummy_transform_position;
+        if (!do_dummy_transform_position_to_set_execute) dummy_transform_position_to_set = dummy_transform_position;
 
         //set x
         if (absolute_x) dummy_transform_position_to_set.x = x;
