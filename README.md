@@ -4,7 +4,7 @@
 ## How to use
 
 1.Add this cs-file to Assets folder.  
-2.Attach BoxCollider2D to the gameobjects you want to collide.  
+2.Attach BoxCollider2D to the all of gameobjects you want to collide.  
 3.Attach this cs-file to the gameobjects you just attached the collider.  
 4.Attach each of gameobjects you want to collide to each of arrays named "grounds".
 
