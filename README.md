@@ -8,6 +8,10 @@
 3.Attach this cs-file to the gameobjects you just attached the collider.  
 4.Attach each of gameobjects you want to collide to each of arrays named "grounds".
 
+:heavy_exclamation_mark:BoxCollider2D's center must be set 0.  
+You can use BoxCollider2D only.
+It doesn't use Rigidbody2D.
+
 ##  Functions
 ###  ・movement
     Set motion.
