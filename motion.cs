@@ -163,12 +163,7 @@ public class motion : MonoBehaviour
 
         if (dummy_transform_position != befor_transform_position) Debug.Log("not same");
 
-        scriptcol_x = new Vector2((dummy_transform_position.x + (box2d.size.x * (transform.localScale.x * 0.5f))), (dummy_transform_position.x + (-box2d.size.x * (transform.localScale.x * 0.5f))));
-        scriptcol_y = new Vector2((dummy_transform_position.y + (box2d.size.y * (transform.localScale.y * 0.5f))), (dummy_transform_position.y + (-box2d.size.y * (transform.localScale.y * 0.5f))));
-        mysize = transform.localScale;
-
-        if (Input.GetKey(KeyCode.Space) && debuging) movement(new Vector2(-10, 0), true);
-        else movement(new Vector2(0, 0), false);
+        movement(new Vector2(0, 0), false);
 
 
         //Array.Fill(square_ground_wall_down_distance, -1);//©‚È‚ñ‚©o—ˆ‚È‚¢‚©‚çfor‚Å
@@ -189,6 +184,9 @@ public class motion : MonoBehaviour
             square_ground_wall_right_distance[count_ - 1] = Mathf.Infinity;
         }
 
+        scriptcol_x = new Vector2((dummy_transform_position.x + (box2d.size.x * (transform.localScale.x * 0.5f))), (dummy_transform_position.x + (-box2d.size.x * (transform.localScale.x * 0.5f))));
+        scriptcol_y = new Vector2((dummy_transform_position.y + (box2d.size.y * (transform.localScale.y * 0.5f))), (dummy_transform_position.y + (-box2d.size.y * (transform.localScale.y * 0.5f))));
+        mysize = transform.localScale;
 
         if (set_befor_col && do_dummy_transform_position_to_set_execute)
         {
@@ -1055,9 +1053,10 @@ public class motion : MonoBehaviour
     {
         bool numplus_x = true;
 
+
         if (set == true)
         {
-            set = false;
+            //set = false;
             movementvalue = movementvalueforset;
             if (movementvalueforset.x > 0)
             {
@@ -1074,7 +1073,8 @@ public class motion : MonoBehaviour
         if (touch_up && movementvalue.y > 0) movementvalue.y = 0;
 
         //dummy_transform_position += new Vector3(movementvalue.x, movementvalue.y, 0);
-        if (movementvalue.x != 1 || movementvalue.y != 0) change_dummy_transform_position(false, movementvalue.x, false, movementvalue.y);
+        if (movementvalue.x != 0 || movementvalue.y != 0) change_dummy_transform_position(false, movementvalue.x, false, movementvalue.y);
+
         if (Air_resistance != 0)
         {
             bool plus;
@@ -1167,6 +1167,11 @@ public class motion : MonoBehaviour
             is_x_0 = false;
         }
     }
+
+    //public void make_an_appointment_changing_dummy(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0, bool movinig_without_col = false)
+    //{
+
+    //}
 
     public void change_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0, bool movinig_without_col = false)
     {
