@@ -1,5 +1,5 @@
 # Whether-collide
- This C# program is a collide progeam.
+ The C# program is a collide program.
 
 ## How to use
 
