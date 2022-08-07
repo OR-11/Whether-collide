@@ -874,8 +874,7 @@ public class motion : MonoBehaviour
                         touch_right = true;
                         touchingCount += 1;
                         SetXCount += 1;
-                        //candidate[0] = new PositionRelAbs
-                        set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
+                        candidate[0] = new PositionRelAbs(change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.y), 0, true, false);
                     }
 
                     if (0 < movementvalue.x)
@@ -916,8 +915,7 @@ public class motion : MonoBehaviour
                         touch_left = true;
                         touchingCount += 1;
                         SetXCount += 1;
-                        //candidate[1] = new PositionRelAbs
-                        set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false), false, 0);
+                        candidate[1] = new PositionRelAbs(change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false), 0, true, false);
                     }
 
                     if (movementvalue.x < 0)
@@ -958,8 +956,7 @@ public class motion : MonoBehaviour
                         touch_up = true;
                         touchingCount += 1;
                         SetYCount += 1;
-                        //candidate[2] = new PositionRelAbs
-                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.y));
+                        candidate[2] = new PositionRelAbs(0, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.y), false, true);
                     }
 
                     if (0 < movementvalue.y)
@@ -999,8 +996,7 @@ public class motion : MonoBehaviour
                         touch_down = true;
                         touchingCount += 1;
                         SetYCount += 1;
-                        //candidate[3] = new PositionRelAbs
-                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.x, false));
+                        candidate[3] = new PositionRelAbs(0, change_col_to_pos_y(grounds[count_].GetComponent<motion>().scriptcol_y.x, false), false, true);
                     }
 
                     if (0 > movementvalue.y)
@@ -1018,206 +1014,206 @@ public class motion : MonoBehaviour
             if (touch_down || touch_left || touch_right || touch_up) touching_something = true;
             else touching_something = false;
 
-            //if (!(touchingCount == 0))
-            //{
-            //    Debug.Log("not0 But it's" + touchingCount);
-            //}
-            //if (touchingCount == 1)
-            //{
-            //    if (touch_up)
-            //    {
-            //        absolutelyX[2] = candidate[2].absX;
+            if (!(touchingCount == 0))
+            {
+                Debug.Log("not0 But it's" + touchingCount);
+            }
+            if (touchingCount == 1)
+            {
+                if (touch_up)
+                {
+                    absolutelyX[2] = candidate[2].absX;
 
-            //        absolutelyY[2] = candidate[2].absY;
+                    absolutelyY[2] = candidate[2].absY;
 
-            //        set_dummy_transform_position(absolutelyX[2], candidate[2].pos.x, absolutelyY[2], candidate[2].pos.y);
-            //    }
+                    set_dummy_transform_position(absolutelyX[2], candidate[2].pos.x, absolutelyY[2], candidate[2].pos.y);
+                }
 
-            //    if (touch_down)
-            //    {
-            //        absolutelyX[3] = candidate[3].absX;
+                if (touch_down)
+                {
+                    absolutelyX[3] = candidate[3].absX;
 
-            //        absolutelyY[3] = candidate[3].absY;
+                    absolutelyY[3] = candidate[3].absY;
 
-            //        set_dummy_transform_position(absolutelyX[3], candidate[3].pos.x, absolutelyY[3], candidate[3].pos.y);
-            //    }
+                    set_dummy_transform_position(absolutelyX[3], candidate[3].pos.x, absolutelyY[3], candidate[3].pos.y);
+                }
 
-            //    if (touch_left)
-            //    {
-            //        absolutelyX[1] = candidate[1].absX;
+                if (touch_left)
+                {
+                    absolutelyX[1] = candidate[1].absX;
 
-            //        absolutelyY[1] = candidate[1].absY;
+                    absolutelyY[1] = candidate[1].absY;
 
-            //        set_dummy_transform_position(absolutelyX[1], candidate[1].pos.x, absolutelyY[1], candidate[1].pos.y);
-            //    }
+                    set_dummy_transform_position(absolutelyX[1], candidate[1].pos.x, absolutelyY[1], candidate[1].pos.y);
+                }
 
-            //    if (touch_right)
-            //    {
-            //        absolutelyX[0] = candidate[0].absX;
+                if (touch_right)
+                {
+                    absolutelyX[0] = candidate[0].absX;
 
-            //        absolutelyY[0] = candidate[0].absY;
+                    absolutelyY[0] = candidate[0].absY;
 
-            //        set_dummy_transform_position(absolutelyX[0], candidate[0].pos.x, absolutelyY[0], candidate[0].pos.y);
-            //    }
-            //}
-            //else if (touchingCount > 1 && (SetXCount > 1 || SetYCount > 1))
-            //{
-            //    //ã:2
-            //    //‰º:3
-            //    //¶:1
-            //    //‰E:0
-            //    if (touch_up)
-            //    {
-            //        absolutelyX[2] = candidate[2].absX;
+                    set_dummy_transform_position(absolutelyX[0], candidate[0].pos.x, absolutelyY[0], candidate[0].pos.y);
+                }
+            }
+            else if (touchingCount > 1 && (SetXCount > 1 || SetYCount > 1))
+            {
+                //ã:2
+                //‰º:3
+                //¶:1
+                //‰E:0
+                if (touch_up)
+                {
+                    absolutelyX[2] = candidate[2].absX;
 
-            //        absolutelyY[2] = candidate[2].absY;
-            //        //////////////////////////////////
+                    absolutelyY[2] = candidate[2].absY;
+                    //////////////////////////////////
 
-            //        if (absolutelyX[2]) comparison[2].x = candidate[2].pos.x;
-            //        else comparison[2].x = candidate[2].pos.x + dummy_transform_position.x;
+                    if (absolutelyX[2]) comparison[2].x = candidate[2].pos.x;
+                    else comparison[2].x = candidate[2].pos.x + dummy_transform_position.x;
 
-            //        if (absolutelyY[2]) comparison[2].y = candidate[2].pos.y;
-            //        else comparison[2].y = candidate[2].pos.y + dummy_transform_position.y;
-            //        /////////////////////////////////////
+                    if (absolutelyY[2]) comparison[2].y = candidate[2].pos.y;
+                    else comparison[2].y = candidate[2].pos.y + dummy_transform_position.y;
+                    /////////////////////////////////////
 
-            //        if (comparison[2].x > dummy_transform_position.x) IsPositive.x = 1;
-            //        else IsPositive.x = 0;
+                    if (comparison[2].x > dummy_transform_position.x) IsPositive.x = 1;
+                    else IsPositive.x = 0;
 
-            //        if (comparison[2].y > dummy_transform_position.y) IsPositive.y = 1;
-            //        else IsPositive.y = 0;
-            //        //////////////////////////////////
+                    if (comparison[2].y > dummy_transform_position.y) IsPositive.y = 1;
+                    else IsPositive.y = 0;
+                    //////////////////////////////////
 
-            //        comparison[2].x -= dummy_transform_position.x;
-            //        comparison[2].y -= dummy_transform_position.y;
-            //        /////////////////////////////////
-            //    }
-            //    if (touch_down)
-            //    {
-            //        absolutelyX[3] = candidate[3].absX;
+                    comparison[2].x -= dummy_transform_position.x;
+                    comparison[2].y -= dummy_transform_position.y;
+                    /////////////////////////////////
+                }
+                if (touch_down)
+                {
+                    absolutelyX[3] = candidate[3].absX;
 
-            //        absolutelyY[3] = candidate[3].absY;
-            //        ////////////////////////////////////
+                    absolutelyY[3] = candidate[3].absY;
+                    ////////////////////////////////////
 
-            //        if (absolutelyX[3]) comparison[3].x = candidate[3].pos.x;
-            //        else comparison[3].x = candidate[3].pos.x + dummy_transform_position.x;
+                    if (absolutelyX[3]) comparison[3].x = candidate[3].pos.x;
+                    else comparison[3].x = candidate[3].pos.x + dummy_transform_position.x;
 
-            //        if (absolutelyY[3]) comparison[3].y = candidate[3].pos.y;
-            //        else comparison[3].y = candidate[3].pos.y + dummy_transform_position.y;
-            //        //////////////////////////////////////
+                    if (absolutelyY[3]) comparison[3].y = candidate[3].pos.y;
+                    else comparison[3].y = candidate[3].pos.y + dummy_transform_position.y;
+                    //////////////////////////////////////
 
-            //        if (comparison[3].x > dummy_transform_position.x) IsPositive.x = 1;
-            //        else IsPositive.x = 0;
+                    if (comparison[3].x > dummy_transform_position.x) IsPositive.x = 1;
+                    else IsPositive.x = 0;
 
-            //        if (comparison[3].y > dummy_transform_position.y) IsPositive.y = 1;
-            //        else IsPositive.y = 0;
-            //        ///////////////////////////////////////
+                    if (comparison[3].y > dummy_transform_position.y) IsPositive.y = 1;
+                    else IsPositive.y = 0;
+                    ///////////////////////////////////////
 
-            //        comparison[3].x -= dummy_transform_position.x;
-            //        comparison[3].y -= dummy_transform_position.y;
-            //        //////////////////////////////////
-            //    }
-            //    if (touch_left)
-            //    {
-            //        absolutelyX[1] = candidate[1].absX;
+                    comparison[3].x -= dummy_transform_position.x;
+                    comparison[3].y -= dummy_transform_position.y;
+                    //////////////////////////////////
+                }
+                if (touch_left)
+                {
+                    absolutelyX[1] = candidate[1].absX;
 
-            //        absolutelyY[1] = candidate[1].absY;
-            //        //////////////////////////////////
+                    absolutelyY[1] = candidate[1].absY;
+                    //////////////////////////////////
 
-            //        if (absolutelyX[1]) comparison[1].x = candidate[1].pos.x;
-            //        else comparison[1].x = candidate[1].pos.x + dummy_transform_position.x;
+                    if (absolutelyX[1]) comparison[1].x = candidate[1].pos.x;
+                    else comparison[1].x = candidate[1].pos.x + dummy_transform_position.x;
 
-            //        if (absolutelyY[1]) comparison[1].y = candidate[1].pos.y;
-            //        else comparison[1].y = candidate[1].pos.y + dummy_transform_position.y;
-            //        ////////////////////////////////////
+                    if (absolutelyY[1]) comparison[1].y = candidate[1].pos.y;
+                    else comparison[1].y = candidate[1].pos.y + dummy_transform_position.y;
+                    ////////////////////////////////////
 
-            //        if (comparison[1].x > dummy_transform_position.x) IsPositive.x = 1;
-            //        else IsPositive.x = 0;
+                    if (comparison[1].x > dummy_transform_position.x) IsPositive.x = 1;
+                    else IsPositive.x = 0;
 
-            //        if (comparison[1].y > dummy_transform_position.y) IsPositive.y = 1;
-            //        else IsPositive.y = 0;
-            //        //////////////////////////////////////////
+                    if (comparison[1].y > dummy_transform_position.y) IsPositive.y = 1;
+                    else IsPositive.y = 0;
+                    //////////////////////////////////////////
 
-            //        comparison[1].x -= dummy_transform_position.x;
-            //        comparison[1].y -= dummy_transform_position.y;
-            //        ////////////////////////////////////////
-            //    }
-            //    if (touch_right)
-            //    {
-            //        absolutelyX[0] = candidate[0].absX;
+                    comparison[1].x -= dummy_transform_position.x;
+                    comparison[1].y -= dummy_transform_position.y;
+                    ////////////////////////////////////////
+                }
+                if (touch_right)
+                {
+                    absolutelyX[0] = candidate[0].absX;
 
-            //        absolutelyY[0] = candidate[0].absY;
-            //        ////////////////////////////////////////
+                    absolutelyY[0] = candidate[0].absY;
+                    ////////////////////////////////////////
 
-            //        if (absolutelyX[0]) comparison[0].x = candidate[0].pos.x;
-            //        else comparison[0].x = candidate[0].pos.x + dummy_transform_position.x;
+                    if (absolutelyX[0]) comparison[0].x = candidate[0].pos.x;
+                    else comparison[0].x = candidate[0].pos.x + dummy_transform_position.x;
 
-            //        if (absolutelyY[0]) comparison[0].y = candidate[0].pos.y;
-            //        else comparison[0].y = candidate[0].pos.y + dummy_transform_position.y;
-            //        /////////////////////////////////////
+                    if (absolutelyY[0]) comparison[0].y = candidate[0].pos.y;
+                    else comparison[0].y = candidate[0].pos.y + dummy_transform_position.y;
+                    /////////////////////////////////////
 
-            //        if (comparison[0].x > dummy_transform_position.x) IsPositive.x = 1;
-            //        else IsPositive.x = 0;
+                    if (comparison[0].x > dummy_transform_position.x) IsPositive.x = 1;
+                    else IsPositive.x = 0;
 
-            //        if (comparison[0].y > dummy_transform_position.y) IsPositive.y = 1;
-            //        else IsPositive.y = 0;
-            //        ///////////////////////////////////
+                    if (comparison[0].y > dummy_transform_position.y) IsPositive.y = 1;
+                    else IsPositive.y = 0;
+                    ///////////////////////////////////
 
-            //        comparison[0].x -= dummy_transform_position.x;
-            //        comparison[0].y -= dummy_transform_position.y;
-            //        /////////////////////////////////////
-            //    }
+                    comparison[0].x -= dummy_transform_position.x;
+                    comparison[0].y -= dummy_transform_position.y;
+                    /////////////////////////////////////
+                }
 
-            //    for (int count_ = comparison.Length; count_ > 0; --count_)
-            //    {
-            //        comparisonX[count_ - 1] = comparison[count_ - 1].x;
-            //        comparisonY[count_ - 1] = comparison[count_ - 1].y;
-            //    }
+                for (int count_ = comparison.Length; count_ > 0; --count_)
+                {
+                    comparisonX[count_ - 1] = comparison[count_ - 1].x;
+                    comparisonY[count_ - 1] = comparison[count_ - 1].y;
+                }
 
-            //    if (IsPositive.x == 1)
-            //    {
-            //        ResultOfSetDummyTransformPosition.x = Mathf.Min(comparisonX);
-            //    }
-            //    else
-            //    {
-            //        ResultOfSetDummyTransformPosition.x = Mathf.Max(comparisonX);
-            //    }
+                if (IsPositive.x == 1)
+                {
+                    ResultOfSetDummyTransformPosition.x = Mathf.Min(comparisonX);
+                }
+                else
+                {
+                    ResultOfSetDummyTransformPosition.x = Mathf.Max(comparisonX);
+                }
 
-            //    if (IsPositive.y == 1)
-            //    {
-            //        ResultOfSetDummyTransformPosition.y = Mathf.Min(comparisonY);
-            //    }
-            //    else
-            //    {
-            //        ResultOfSetDummyTransformPosition.y = Mathf.Max(comparisonY);
-            //    }
+                if (IsPositive.y == 1)
+                {
+                    ResultOfSetDummyTransformPosition.y = Mathf.Min(comparisonY);
+                }
+                else
+                {
+                    ResultOfSetDummyTransformPosition.y = Mathf.Max(comparisonY);
+                }
 
-            //    if (!candidate[Array.IndexOf(comparisonX, ResultOfSetDummyTransformPosition.x)].absX)
-            //    {
-            //        ResultOfSetDummyTransformPosition.x = candidate[Array.IndexOf(comparisonX, ResultOfSetDummyTransformPosition.x)].pos.x;
-            //    }
+                if (!candidate[Array.IndexOf(comparisonX, ResultOfSetDummyTransformPosition.x)].absX)
+                {
+                    ResultOfSetDummyTransformPosition.x = candidate[Array.IndexOf(comparisonX, ResultOfSetDummyTransformPosition.x)].pos.x;
+                }
 
-            //    if (!candidate[Array.IndexOf(comparisonY, ResultOfSetDummyTransformPosition.y)].absY)
-            //    {
-            //        ResultOfSetDummyTransformPosition.y = candidate[Array.IndexOf(comparisonY, ResultOfSetDummyTransformPosition.y)].pos.y;
-            //    }
+                if (!candidate[Array.IndexOf(comparisonY, ResultOfSetDummyTransformPosition.y)].absY)
+                {
+                    ResultOfSetDummyTransformPosition.y = candidate[Array.IndexOf(comparisonY, ResultOfSetDummyTransformPosition.y)].pos.y;
+                }
 
-            //    //if (ResultOfSetDummyTransformPosition.x == dummy_transform_position.x)
-            //    //{
-            //    //    WillMoveX = false;
-            //    //    ResultOfSetDummyTransformPosition.x = 0;
-            //    //}
-            //    //else WillMoveX = true;
+                //if (ResultOfSetDummyTransformPosition.x == dummy_transform_position.x)
+                //{
+                //    WillMoveX = false;
+                //    ResultOfSetDummyTransformPosition.x = 0;
+                //}
+                //else WillMoveX = true;
 
-            //    //if (ResultOfSetDummyTransformPosition.y == dummy_transform_position.y)
-            //    //{
-            //    //    WillMoveY = false;
-            //    //    ResultOfSetDummyTransformPosition.y = 0;
-            //    //}
-            //    //else WillMoveY = true;
+                //if (ResultOfSetDummyTransformPosition.y == dummy_transform_position.y)
+                //{
+                //    WillMoveY = false;
+                //    ResultOfSetDummyTransformPosition.y = 0;
+                //}
+                //else WillMoveY = true;
 
-            //    set_dummy_transform_position(candidate[Array.IndexOf(comparisonX, ResultOfSetDummyTransformPosition.x)].absX, ResultOfSetDummyTransformPosition.x, 
-            //        candidate[Array.IndexOf(comparisonY, ResultOfSetDummyTransformPosition.y)].absY, ResultOfSetDummyTransformPosition.y);
-            //}
+                set_dummy_transform_position(candidate[Array.IndexOf(comparisonX, ResultOfSetDummyTransformPosition.x)].absX, ResultOfSetDummyTransformPosition.x, 
+                    candidate[Array.IndexOf(comparisonY, ResultOfSetDummyTransformPosition.y)].absY, ResultOfSetDummyTransformPosition.y);
+            }
 
             for (int count_ = touching_down.Length; count_ > 0; --count_)
             {
