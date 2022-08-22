@@ -1,5 +1,6 @@
 # Whether-collide
- The C# program is a collide program.
+ The C# program is a collide program.   
+ I'm making it not to let players go through walls.
 
 ## How to use
 
