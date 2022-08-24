@@ -31,6 +31,21 @@ public class motion : MonoBehaviour
     public float Air_resistance;
     public float gravity;
 
+    public Vector2 LocalScriptCol_X;
+    public Vector2 LocalScriptCol_Y;
+
+    //---------------------------
+    //回転したとき用
+    //p1:右上
+    //p2:左上
+    //p3:右下
+    //p4:左下
+    public Vector2 p1;
+    public Vector2 p2;
+    public Vector2 p3;
+    public Vector2 p4;
+    //---------------------------
+
     public Vector2 scriptcol_x;
     public Vector2 scriptcol_y;
 
@@ -175,13 +190,18 @@ public class motion : MonoBehaviour
 
             //Debug.Log("x:" + scriptcol_x + "y:" + scriptcol_y);
 
-            drowline(new Vector3(scriptcol_x.x, scriptcol_y.x, -1), new Vector3(scriptcol_x.y, scriptcol_y.x, -1));
+            //drowline(new Vector3(scriptcol_x.x, scriptcol_y.x, -1), new Vector3(scriptcol_x.y, scriptcol_y.x, -1));
 
-            drowline(dummy_transform_position, befor_transform_position);
-            drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.x, 0));
-            drowline(new Vector3(scriptcol_x.y, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.x, 0));
-            drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.y, 0));
-            drowline(new Vector3(scriptcol_x.y, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.y, 0));
+            //drowline(dummy_transform_position, befor_transform_position);
+            //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.x, 0));
+            //drowline(new Vector3(scriptcol_x.y, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.x, 0));
+            //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.y, 0));
+            //drowline(new Vector3(scriptcol_x.y, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.y, 0));
+
+            //drowline(new Vector3(dummy_transform_position.x, LocalScriptCol_Y.x + dummy_transform_position.y, 0), new Vector3(dummy_transform_position.x, LocalScriptCol_Y.y + dummy_transform_position.y, 0));
+
+            //p1-p2
+            drowline(new Vector3(p1.x, p1.y, 0), new Vector3(p2.x, p2.y, 0));
 
             //if (Input.GetKey(KeyCode.Space)) movement(new Vector2(-1, 0), true);
             //else movement(new Vector2(0, 0), false);
@@ -217,8 +237,22 @@ public class motion : MonoBehaviour
             square_ground_wall_right_distance[count_ - 1] = Mathf.Infinity;
         }
 
-        scriptcol_x = new Vector2((dummy_transform_position.x + (box2d.size.x * (transform.localScale.x * 0.5f))), (dummy_transform_position.x + (-box2d.size.x * (transform.localScale.x * 0.5f))));
-        scriptcol_y = new Vector2((dummy_transform_position.y + (box2d.size.y * (transform.localScale.y * 0.5f))), (dummy_transform_position.y + (-box2d.size.y * (transform.localScale.y * 0.5f))));
+        LocalScriptCol_X = new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x));
+        LocalScriptCol_Y = new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y));
+
+        scriptcol_x = new Vector2((dummy_transform_position.x + LocalScriptCol_X.x), (dummy_transform_position.x + LocalScriptCol_X.y));//(box2d.size.x * (transform.localScale.x * 0.5f)),(-box2d.size.x * (transform.localScale.x * 0.5f))
+        scriptcol_y = new Vector2((dummy_transform_position.y + LocalScriptCol_Y.x), (dummy_transform_position.y + LocalScriptCol_Y.y));//(box2d.size.y * (transform.localScale.y * 0.5f)),(-box2d.size.y * (transform.localScale.y * 0.5f))
+
+        //回転したとき用
+        //p1:右上
+        //p2:左上
+        //p3:右下
+        //p4:左下
+        p1 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
+        p2 = new Vector2((-dummy_transform_position.x * 2) + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
+        p3 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))));
+        p4 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))));
+
         mysize = transform.localScale;
 
         if (set_befor_col && do_dummy_transform_position_to_set_execute)
