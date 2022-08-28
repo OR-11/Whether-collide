@@ -201,7 +201,7 @@ public class motion : MonoBehaviour
             //drowline(new Vector3(dummy_transform_position.x, LocalScriptCol_Y.x + dummy_transform_position.y, 0), new Vector3(dummy_transform_position.x, LocalScriptCol_Y.y + dummy_transform_position.y, 0));
 
             //p1-p2
-            drowline(new Vector3(p1.x, p1.y, 0), new Vector3(p2.x, p2.y, 0));
+            drowline(new Vector3(p1.x, p1.y, 0), new Vector3(p2.x, p2.y + 10, 0));
 
             //if (Input.GetKey(KeyCode.Space)) movement(new Vector2(-1, 0), true);
             //else movement(new Vector2(0, 0), false);
@@ -248,7 +248,7 @@ public class motion : MonoBehaviour
         //p2:左上
         //p3:右下
         //p4:左下
-        p1 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
+        p1 = new Vector2(dummy_transform_position.x + (Mathf.Cos(((transform.rotation.z * Mathf.PI)) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin(((transform.rotation.z * Mathf.PI)) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
         p2 = new Vector2((-dummy_transform_position.x * 2) + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
         p3 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))));
         p4 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))));
@@ -458,8 +458,8 @@ public class motion : MonoBehaviour
             }
 
             //動いてないけどY座標が変わって当たったことを検知
-            if (dummy_transform_position.x == befor_transform_position.x && (scriptcol_y.x != befor_scriptcol_y.x || scriptcol_y.y != befor_scriptcol_y.y 
-                || motion_processing.scriptcol_y.x != motion_processing.befor_scriptcol_y.x || motion_processing.scriptcol_y.y != motion_processing.befor_scriptcol_y.y) &&
+            if (dummy_transform_position.x == befor_transform_position.x && (!Mathf.Approximately(scriptcol_y.x, befor_scriptcol_y.x) || !Mathf.Approximately(scriptcol_y.y, befor_scriptcol_y.y) 
+                || !Mathf.Approximately(motion_processing.scriptcol_y.x, motion_processing.befor_scriptcol_y.x) || !Mathf.Approximately(motion_processing.scriptcol_y.y, motion_processing.befor_scriptcol_y.y)) &&
                 scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)
             {
                 //右
@@ -848,14 +848,14 @@ public class motion : MonoBehaviour
 
             set_cols();
 
-            if (square_ground_wall_right[count - 1] == false && scriptcol_x.x == motion_processing.scriptcol_x.y && motion_processing.scriptcol_y.x > scriptcol_y.y && motion_processing.scriptcol_y.y < scriptcol_y.x)//右ぶつかる
+            if (square_ground_wall_right[count - 1] == false && Mathf.Approximately(scriptcol_x.x, motion_processing.scriptcol_x.y) && motion_processing.scriptcol_y.x > scriptcol_y.y && motion_processing.scriptcol_y.y < scriptcol_y.x)//右ぶつかる
             {
                 //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.y), false, 0);
                 square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
                 square_ground_wall_right[count - 1] = true;
             }
-            if (square_ground_wall_left[count - 1] == false && scriptcol_x.y == motion_processing.scriptcol_x.x && motion_processing.scriptcol_y.x > scriptcol_y.y && motion_processing.scriptcol_y.y < scriptcol_y.x)//左ぶつかる
+            if (square_ground_wall_left[count - 1] == false && Mathf.Approximately(scriptcol_x.y, motion_processing.scriptcol_x.x) && motion_processing.scriptcol_y.x > scriptcol_y.y && motion_processing.scriptcol_y.y < scriptcol_y.x)//左ぶつかる
             {
                 //dummy_transform_position += new Vector3(motion_processing.scriptcol_x.y + -scriptcol_x.x, 0, 0);
                 //set_dummy_transform_position(true, change_col_to_pos_x(motion_processing.scriptcol_x.x, false), false, 0);
@@ -863,12 +863,12 @@ public class motion : MonoBehaviour
                 square_ground_wall_left[count - 1] = true;
                 //Debug.Log("5");
             }
-            if (square_ground_wall_up[count - 1] == false && scriptcol_y.x == motion_processing.scriptcol_y.y && motion_processing.scriptcol_x.x > scriptcol_x.y && motion_processing.scriptcol_x.y < scriptcol_x.x)
+            if (square_ground_wall_up[count - 1] == false && Mathf.Approximately(scriptcol_y.x, motion_processing.scriptcol_y.y) && motion_processing.scriptcol_x.x > scriptcol_x.y && motion_processing.scriptcol_x.y < scriptcol_x.x)
             {
                 square_ground_wall_up_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.y - befor_scriptcol_y.x);
                 square_ground_wall_up[count - 1] = true;
             }
-            if (square_ground_wall_down[count - 1] == false && scriptcol_y.y == motion_processing.scriptcol_y.x && motion_processing.scriptcol_x.x > scriptcol_x.y && motion_processing.scriptcol_x.y < scriptcol_x.x)
+            if (square_ground_wall_down[count - 1] == false && Mathf.Approximately(scriptcol_y.y, motion_processing.scriptcol_y.x) && motion_processing.scriptcol_x.x > scriptcol_x.y && motion_processing.scriptcol_x.y < scriptcol_x.x)
             {
                 square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
                 square_ground_wall_down[count - 1] = true;
