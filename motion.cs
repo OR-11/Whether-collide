@@ -82,6 +82,9 @@ public class motion : MonoBehaviour
 
     motion script_motion;
 
+    //public GameObject[] HideGrounds = new GameObject[0];
+    //public int num;
+
     public GameObject[] grounds = new GameObject[0];
 
     public bool[] square_ground_wall_right;
@@ -192,7 +195,7 @@ public class motion : MonoBehaviour
 
             //drowline(new Vector3(scriptcol_x.x, scriptcol_y.x, -1), new Vector3(scriptcol_x.y, scriptcol_y.x, -1));
 
-            //drowline(dummy_transform_position, befor_transform_position);
+            drowline(dummy_transform_position, befor_transform_position, Color.red, 0.1f);
             //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.x, 0));
             //drowline(new Vector3(scriptcol_x.y, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.x, 0));
             //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.y, 0));
@@ -201,8 +204,13 @@ public class motion : MonoBehaviour
             //drowline(new Vector3(dummy_transform_position.x, LocalScriptCol_Y.x + dummy_transform_position.y, 0), new Vector3(dummy_transform_position.x, LocalScriptCol_Y.y + dummy_transform_position.y, 0));
 
             //p1-p2
-            drowline(new Vector3(p1.x, p1.y, 0), new Vector3(p2.x, p2.y + 10, 0));
+            drowline(new Vector3(p1.x, p1.y, 0), new Vector3(p2.x, p2.y, 0), Color.red, 1);
 
+            drowline(new Vector3(p3.x, p3.y, 0), new Vector3(p4.x, p4.y, 0), Color.red, 1);
+
+            drowline(new Vector3(p1.x, p1.y, 0), new Vector3(p3.x, p3.y, 0), Color.red, 1);
+
+            drowline(new Vector3(p2.x, p2.y, 0), new Vector3(p4.x, p4.y, 0), Color.red, 1);
             //if (Input.GetKey(KeyCode.Space)) movement(new Vector2(-1, 0), true);
             //else movement(new Vector2(0, 0), false);
             if (Input.GetKey(KeyCode.P)) Debug.Log(scriptcol_x);
@@ -212,9 +220,34 @@ public class motion : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //bool same = true;
+        //if (grounds.Length != HideGrounds.Length) same = false;
+        //if (same) for (int c = grounds.Length; c > 0; --c)
+        //{
+        //    try
+        //    {
+        //        if (grounds[c - 1] != HideGrounds[c - 1]) same = false;
+        //    }
+        //    catch (IndexOutOfRangeException a)
+        //    {
+        //        if (!(grounds[c - 1] == null && HideGrounds[c - 1] == null)) same = false;
+        //    }
+        //}
+        //if (ArrayUtility.IndexOf(grounds, null) != -1)
+        //{
+        //    Debug.Log("a");
+        //    num = ArrayUtility.IndexOf(grounds, null);
+        //    string err = "";
+        //    if (num > 3 || num == 0) err = "The grounds' " + num + "th is null. To avoid error, this program is going not to use grounds' " + num + "th until the grounds changes.";
+        //    else if (num == 2) err = "The grounds' " + num + "nd is null. To avoid error, this program is going not to use grounds' " + num + "nd until the grounds changes.";
+        //    else if (num == 1) err = "The grounds' " + num + "st is null. To avoid error, this program is going not to use grounds' " + num + "st until the grounds changes.";
+        //    Debug.Log(err);
+        //}
+
+
         dummy_transform_position = transform.position;
 
-        if (dummy_transform_position != befor_transform_position) Debug.Log("not same");
+        //if (dummy_transform_position != befor_transform_position) Debug.Log("not same");
 
         movement(new Vector2(0, 0), false);
 
@@ -248,11 +281,29 @@ public class motion : MonoBehaviour
         //p2:左上
         //p3:右下
         //p4:左下
-        p1 = new Vector2(dummy_transform_position.x + (Mathf.Cos(((transform.rotation.z * Mathf.PI)) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin(((transform.rotation.z * Mathf.PI)) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
-        p2 = new Vector2((-dummy_transform_position.x * 2) + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
-        p3 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))));
-        p4 = new Vector2(dummy_transform_position.x + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (box2d.size.y / Mathf.Tan(box2d.size.x))) * Mathf.Sqrt(Mathf.Pow(box2d.size.x, 2) + Mathf.Pow(box2d.size.y, 2))));
+        //Debug.Log("" + Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.x) + "__" + Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.y));
 
+        float p1Atan = Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.x);
+        float ra = (Mathf.PI * -transform.localRotation.eulerAngles.z) / 180;
+        float p1sqrt = Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2));
+
+        float p2Atan = Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.y) - Mathf.PI;
+        float p2sqrt = Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2));
+
+        float p3Atan = Mathf.Atan(LocalScriptCol_Y.y / LocalScriptCol_X.x);
+        float p3sqrt = Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.y, 2));
+
+        float p4Atan = Mathf.Atan(LocalScriptCol_Y.y / LocalScriptCol_X.y) - Mathf.PI;
+        float p4sqrt = Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.y, 2));
+
+        //Debug.Log(name + p1Atan / Mathf.PI * 180);
+
+        p1 = new Vector2(dummy_transform_position.x + (Mathf.Cos((p1Atan - ra)) * p1sqrt), dummy_transform_position.y + (Mathf.Sin((p1Atan - ra)) * p1sqrt));
+        p2 = new Vector2(dummy_transform_position.x + (Mathf.Cos((p2Atan - ra)) * p2sqrt), dummy_transform_position.y + (Mathf.Sin((p2Atan - ra)) * p2sqrt));
+        //p1 = new Vector2(dummy_transform_position.x + (Mathf.Cos(((transform.rotation.z * Mathf.PI)) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin(((transform.rotation.z * Mathf.PI)/180f) + (LocalScriptCol_Y.x / Mathf.Tan(LocalScriptCol_X.x))) * Mathf.Sqrt(Mathf.Pow(LocalScriptCol_X.x, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
+        //p2 = new Vector2((-dummy_transform_position.x * 2) + (Mathf.Cos((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))), dummy_transform_position.y + (Mathf.Sin((transform.rotation.z * Mathf.PI) + (LocalScriptCol_Y.x / Mathf.Tan(-LocalScriptCol_X.y))) * Mathf.Sqrt(Mathf.Pow(-LocalScriptCol_X.y, 2) + Mathf.Pow(LocalScriptCol_Y.x, 2))));
+        p3 = new Vector2(dummy_transform_position.x + (Mathf.Cos((p3Atan - ra)) * p3sqrt), dummy_transform_position.y + (Mathf.Sin((p3Atan - ra)) * p3sqrt));
+        p4 = new Vector2(dummy_transform_position.x + (Mathf.Cos((p4Atan - ra)) * p4sqrt), dummy_transform_position.y + (Mathf.Sin((p4Atan - ra)) * p4sqrt));
         mysize = transform.localScale;
 
         if (set_befor_col && do_dummy_transform_position_to_set_execute)
@@ -275,6 +326,8 @@ public class motion : MonoBehaviour
         {
             Debug.Log(touch_down);
         }
+
+        //HideGrounds = grounds;
     }
 
     void collision()
@@ -364,13 +417,27 @@ public class motion : MonoBehaviour
 
         while (count > 0)
         {
-            motion_processing = grounds[count - 1].GetComponent<motion>();
+            //try
+            //{
+                motion_processing = grounds[count - 1].GetComponent<motion>();
+            //}
+            //catch(UnassignedReferenceException a)
+            //{
+            //    count -= 1;
+            //    continue;
+            //}
             motion_TransSize = grounds[count - 1].transform.localScale;
 
             square_ground_wall_left[count - 1] = false;
             square_ground_wall_right[count - 1] = false;
             square_ground_wall_up[count - 1] = false;
             square_ground_wall_down[count - 1] = false;
+
+            //if (count - 1 == num)
+            //{
+            //    count -= 1;
+            //    continue;
+            //}
 
             //if (Input.GetKey(KeyCode.D) && debuging) Debug.Log(motion_processing + "" + Mathf.Approximately(motion_processing.scriptcol_x.x, scriptcol_x.y));
 
@@ -556,7 +623,7 @@ public class motion : MonoBehaviour
 
                 //touching_something = true;
             }
-            else if (is_y_0 == false)
+            else if (is_y_0 == false)//XとY
             {
                 
                 //touching_something = true;
@@ -628,12 +695,15 @@ public class motion : MonoBehaviour
                     }
                     else if(motion_processing.scriptcol_y.x < befor_scriptcol_y.y && motion_processing.scriptcol_y.x >= scriptcol_y.y && (motion_processing.scriptcol_y.x - b3) / a3 > motion_processing.scriptcol_x.y && (motion_processing.scriptcol_y.x - b3) / a3 < motion_processing.scriptcol_x.x && befor_transform_position.y - dummy_transform_position.y > 0)//先にぶつかったのは横か縦か-相手の下面-(a3/右側下)
                     {
+                        Debug.Log("under1");
                         if (befor_transform_position.x - dummy_transform_position.x != 0)
                         {
                             if (befor_transform_position.x - dummy_transform_position.x < 0)//進む方向が正
                             {
                                 if ((motion_processing.scriptcol_y.x - b3) / a3 > befor_scriptcol_x.x && (motion_processing.scriptcol_y.x - b3) / a3 <= scriptcol_x.x)
                                 {
+                                    Debug.Log("under2" + grounds[count - 1].name);
+                                    Debug.Log(Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y));
                                     if (stop_when_this_collide)
                                     {
                                         //set_dummy_transform_position(true, change_col_to_pos_x((motion_processing.scriptcol_y.y - b1) / a1), true, change_col_to_pos_y(a1 * ((motion_processing.scriptcol_y.y - b1) / a1) + b1));
@@ -715,6 +785,7 @@ public class motion : MonoBehaviour
                     }
                     else if (motion_processing.scriptcol_y.x < befor_scriptcol_y.y && motion_processing.scriptcol_y.x >= scriptcol_y.y && (motion_processing.scriptcol_y.x - b4) / a4 > motion_processing.scriptcol_x.y && (motion_processing.scriptcol_y.x - b4) / a4 < motion_processing.scriptcol_x.x && befor_transform_position.y - dummy_transform_position.y > 0)//先にぶつかったのは横か縦か-相手の下面-(a4/左側下)
                     {
+                        //Debug.Log("under");
                         if (befor_transform_position.x - dummy_transform_position.x != 0)
                         {
                             //
@@ -754,6 +825,39 @@ public class motion : MonoBehaviour
                             }
                         }
                     }
+                    ////a1：右上の点の比例定数
+                    ////a2：左上の点の比例定数
+                    ////a3：右下の点の比例定数
+                    ////a4：左下の点の比例定数
+
+                    //- 1次関数の等式変形 -
+
+                    //y = ax + b
+                    //y / x = a + b
+                    //1 / x = (a + b) / y
+
+                    //y = ax + b
+                    //y - b = ax
+                    //(y - b) / a = x
+                    //x = (y - b) / a
+
+                    //下方向の「横に動いてるとき、自分より細いやつが自分の底面(両頂点より内側)にぶつかったとき」
+                    if (((motion_processing.scriptcol_y.x - b4) / a4) >= motion_processing.scriptcol_x.y && ((motion_processing.scriptcol_y.x - b3) / a3) <= motion_processing.scriptcol_x.x
+                        && motion_processing.scriptcol_y.x >= scriptcol_y.y && motion_processing.scriptcol_y.x <= befor_scriptcol_y.y
+                        && !Mathf.Approximately(befor_scriptcol_x.x, scriptcol_x.x))
+                    {
+                        if (stop_when_this_collide)
+                        {
+                            square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
+                        }
+                        else
+                        {
+                            square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
+                        }
+                        square_ground_wall_down[count - 1] = true;
+                    }
+                    //上
+                    //else if ((motion_processing.scriptcol_y.x - b1) / a1 < scriptcol_x.x && (motion_processing.scriptcol_y.x - ))
                 }
 
                 set_cols();
@@ -1018,6 +1122,7 @@ public class motion : MonoBehaviour
                 if (distance != Mathf.Infinity)
                 {
                     count_ = ArrayUtility.IndexOf(square_ground_wall_down_distance, distance);
+                    //Debug.Log(SetStringFromList(square_ground_wall_down_distance) + "||" + grounds[count_].name + "||" + distance);
 
                     if (!only_whether_touch)
                     {
@@ -1433,7 +1538,14 @@ public class motion : MonoBehaviour
 
         for (int c = grounds.Length; c > 0; --c)
         {
-            motion__processing = grounds[c - 1].GetComponent<motion>();
+            //try
+            //{
+                motion__processing = grounds[c - 1].GetComponent<motion>();
+            //}
+            //catch (UnassignedReferenceException a)
+            //{
+            //    continue;
+            //}
 
             if (!IsMovementvaluePositive)
             {
@@ -1714,8 +1826,27 @@ public class motion : MonoBehaviour
         touching_left = new GameObject[grounds.Length];
     }
 
-    void drowline(Vector3 start, Vector3 end)
+    void drowline(Vector3 start, Vector3 end, Color color, float time = 2)
     {
-        Debug.DrawLine(start, end, Color.red, 2,false);
+        Debug.DrawLine(start, end, color, time,false);
+    }
+
+    private string SetStringFromList(float[] list)
+    {
+        string s = "";
+        string s_;
+        for (int c = list.Length; c > 0; --c)
+        {
+            try
+            {
+                s_ = String.Concat(String.Concat(grounds[c - 1].name.ToString(), " = "), list[c - 1].ToString()) + ", ";
+            }
+            catch(UnassignedReferenceException a)
+            {
+                continue;
+            }
+            s = s + s_;
+        }
+        return s;
     }
 }
