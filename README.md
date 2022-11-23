@@ -14,18 +14,24 @@ You can use BoxCollider2D only.
 It doesn't use Rigidbody2D.
 
 ##  Functions
-###  ・movement
+###  ・Main()
+    Main function. Use it when Function Settings' "Use function" is "None".
+
+###  ・Addmovement(Vector2 MovementValue)
+    Add movement's value. It's like Rigidbody's AddForce.
+
+###  ・movement(Vector2 movementvalueforset)
     Set motion.
-  
-###  ・change_dummy_transform_position
+    
+###  ・change_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, [bool absolute_z = false, float z = 0, bool movinig_without_col = false])
     You shouldn't use transform.position when you want the gameobject to change position.
     You can use this to change the object's position.
+   
+###  ・is_touching(GameObject something)
+    It'll returns whether colliding with "something".
+   
+###  ・touching_Object(int num)
+    It'll return the gameobject of the number you set.
     
-###  ・is_touching
-    It returns whether touching the gameobjects that set arguments or not.
-    
-###  ・touching_Object
-    It returns the gameobject of the number you set.
-    
-###  ・searching_object_withTag
-    It returns whether touching the gameobject tagged in the arguments or not.
+###  ・searching_object_withTag(string tag)
+    It'll return whether touching the gameobject tagged in the arguments or not.
