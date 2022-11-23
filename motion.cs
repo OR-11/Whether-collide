@@ -360,24 +360,24 @@ public class motion : MonoBehaviour
             //p4:¶‰º
         }
 
-        switch (OwnRotate)
-        {
-            case 0:
-                scriptcol_x = new Vector2(p1.x, p2.x);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
-                scriptcol_y = new Vector2(p1.y, p3.y);//(OriginalScriptCol.Y_BiggerOne, OriginalScriptCol.Y_SmallerOne);
+        //switch (OwnRotate)
+        //{
+        //    case 0:
+        //        scriptcol_x = new Vector2(p1.x, p2.x);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
+        //        scriptcol_y = new Vector2(p1.y, p3.y);//(OriginalScriptCol.Y_BiggerOne, OriginalScriptCol.Y_SmallerOne);
 
-                LocalScriptCol_X_IncludeRotate = LocalScriptCol_X;
-                LocalScriptCol_Y_IncludeRotate = LocalScriptCol_Y;
-                break;
+        //        LocalScriptCol_X_IncludeRotate = LocalScriptCol_X;
+        //        LocalScriptCol_Y_IncludeRotate = LocalScriptCol_Y;
+        //        break;
 
-            case 90:
-                scriptcol_x = new Vector2(p3.x, p1.x);//(OriginalScriptCol.Y_SmallerOne, OriginalScriptCol.Y_BiggerOne);
-                scriptcol_y = new Vector2(p1.y, p2.y);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
+        //    case 90:
+        //        scriptcol_x = new Vector2(p3.x, p1.x);//(OriginalScriptCol.Y_SmallerOne, OriginalScriptCol.Y_BiggerOne);
+        //        scriptcol_y = new Vector2(p1.y, p2.y);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
 
-                LocalScriptCol_X_IncludeRotate = new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y));
-                LocalScriptCol_Y_IncludeRotate = new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x));
-                break;
-        }
+        //        LocalScriptCol_X_IncludeRotate = new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y));
+        //        LocalScriptCol_Y_IncludeRotate = new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x));
+        //        break;
+        //}
 
         //--------------------------------------------------------------------------------------
         //‰ñ“]‚µ‚½‚Æ‚«—p
@@ -409,6 +409,25 @@ public class motion : MonoBehaviour
         p3 = new Vector2(dummy_transform_position.x + (Mathf.Cos((p3Atan - ra)) * p3sqrt), dummy_transform_position.y + (Mathf.Sin((p3Atan - ra)) * p3sqrt));
         p4 = new Vector2(dummy_transform_position.x + (Mathf.Cos((p4Atan - ra)) * p4sqrt), dummy_transform_position.y + (Mathf.Sin((p4Atan - ra)) * p4sqrt));
         mysize = transform.localScale;
+
+        switch (OwnRotate)
+        {
+            case 0:
+                scriptcol_x = new Vector2(p1.x, p2.x);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
+                scriptcol_y = new Vector2(p1.y, p3.y);//(OriginalScriptCol.Y_BiggerOne, OriginalScriptCol.Y_SmallerOne);
+
+                LocalScriptCol_X_IncludeRotate = LocalScriptCol_X;
+                LocalScriptCol_Y_IncludeRotate = LocalScriptCol_Y;
+                break;
+
+            case 90:
+                scriptcol_x = new Vector2(p3.x, p1.x);//(OriginalScriptCol.Y_SmallerOne, OriginalScriptCol.Y_BiggerOne);
+                scriptcol_y = new Vector2(p1.y, p2.y);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
+
+                LocalScriptCol_X_IncludeRotate = new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y));
+                LocalScriptCol_Y_IncludeRotate = new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x));
+                break;
+        }
 
         if (OwnRotate > 0 && OwnRotate < 90)
         {
@@ -1626,6 +1645,11 @@ public class motion : MonoBehaviour
             }
             else touching = new GameObject[0];
         }
+    }
+
+    public void Addmovement(Vector2 MovementValue)
+    {
+        movement(new Vector2(movementvalue.x + MovementValue.x, movementvalue.y + MovementValue.y), true);
     }
 
     public void movement(Vector2 movementvalueforset, bool set = true)
