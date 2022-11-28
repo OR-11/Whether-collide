@@ -303,6 +303,10 @@ public class motion : MonoBehaviour
     public void Main()
     {
         OwnRotate = transform.localRotation.eulerAngles.z;
+        if (Mathf.Approximately(OwnRotate, 0)) OwnRotate = 0;
+        else if (Mathf.Approximately(OwnRotate, 90)) OwnRotate = 90;
+        else if (Mathf.Approximately(OwnRotate, 180)) OwnRotate = 180;
+        else if (Mathf.Approximately(OwnRotate, 360)) OwnRotate = 360;
 
         dummy_transform_position = transform.position;
         ObjectSettings.IsTrigger = box2d.isTrigger;
@@ -426,6 +430,22 @@ public class motion : MonoBehaviour
 
                 LocalScriptCol_X_IncludeRotate = new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y));
                 LocalScriptCol_Y_IncludeRotate = new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x));
+                break;
+
+            case 180:
+                scriptcol_x = new Vector2(p2.x, p1.x);
+                scriptcol_y = new Vector2(p3.y, p1.y);
+
+                LocalScriptCol_X_IncludeRotate = new Vector2(-LocalScriptCol_X.y, -LocalScriptCol_X.x);
+                LocalScriptCol_Y_IncludeRotate = new Vector2(-LocalScriptCol_Y.y, -LocalScriptCol_Y.x);
+                break;
+
+            case 270:
+                scriptcol_x = new Vector2(p1.x, p3.x);
+                scriptcol_y = new Vector2(p2.y, p1.y);
+
+                LocalScriptCol_X_IncludeRotate = new Vector2(-new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y)).y, -new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y)).x);
+                LocalScriptCol_Y_IncludeRotate = new Vector2(-new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x)).y, -new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x)).x);
                 break;
         }
 
@@ -1161,6 +1181,7 @@ public class motion : MonoBehaviour
                         SetXCount += 1;
                         //candidate[0] = new PositionRelAbs
                         set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
+                        Debug.Log("aaa");
                     }
 
                     if (0 < movementvalue.x)
@@ -1182,7 +1203,6 @@ public class motion : MonoBehaviour
 
                 float distance = Mathf.Min(square_ground_wall_left_distance);
                 int count_;
-                //Debug.Log(square_ground_wall_left_distance + "" + distance);
                 if (distance != Mathf.Infinity)
                 {
                     count_ = ArrayUtility.IndexOf(square_ground_wall_left_distance, distance);
@@ -1203,6 +1223,7 @@ public class motion : MonoBehaviour
                         SetXCount += 1;
                         //candidate[1] = new PositionRelAbs
                         set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false), false, 0);
+                        Debug.Log("bbb" + change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false));
                     }
 
                     if (movementvalue.x < 0)
@@ -1649,7 +1670,8 @@ public class motion : MonoBehaviour
 
     public void Addmovement(Vector2 MovementValue)
     {
-        movement(new Vector2(movementvalue.x + MovementValue.x, movementvalue.y + MovementValue.y), true);
+        //movement(new Vector2(movementvalue.x + MovementValue.x, movementvalue.y + MovementValue.y), true);
+        movementvalue += MovementValue;
     }
 
     public void movement(Vector2 movementvalueforset, bool set = true)
@@ -1892,7 +1914,7 @@ public class motion : MonoBehaviour
         return touching[num];
     }
 
-    void set_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0)//, bool movinig_without_col = false)
+    public void set_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0)//, bool movinig_without_col = false)
     {
         //set x
         if (absolute_x) dummy_transform_position.x = x;
@@ -1938,9 +1960,8 @@ public class motion : MonoBehaviour
 
     public float change_col_to_pos_x(float colx, bool is_x = true)
     {
-        //Debug.Log("++" + is_x);
         if (is_x) return colx - LocalScriptCol_X_IncludeRotate.x;//((box2d.size.x * transform.localScale.x) / 2);
-        else return colx + LocalScriptCol_Y_IncludeRotate.y;//((box2d.size.x * transform.localScale.x) / 2);
+        else return colx - LocalScriptCol_X_IncludeRotate.y;//((box2d.size.x * transform.localScale.x) / 2);
     }
 
     public float change_col_to_pos_y(float coly, bool is_x = true)
