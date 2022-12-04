@@ -50,8 +50,11 @@ public class motion : MonoBehaviour
     public class ObjectSetting
     {
         public bool ground;
+        [HideInInspector]
         public bool only_whether_touch;
+        [HideInInspector]
         public bool stop_when_this_collide;
+        [HideInInspector]
         public float Air_resistance;
         public float gravity;
         public bool useGravity;
