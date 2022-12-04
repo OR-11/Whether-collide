@@ -46,6 +46,17 @@ public class motion : MonoBehaviour
         public bool absY;
     }
 
+    public class CollisionLine
+    {
+        public CollisionLine(float a, float b)
+        {
+            this.a = a;
+            this.b = b;
+        }
+        public float a;
+        public float b;
+    }
+
     [System.Serializable]
     public class ObjectSetting
     {
@@ -55,16 +66,35 @@ public class motion : MonoBehaviour
         [HideInInspector]
         public bool stop_when_this_collide;
         [HideInInspector]
+        public int priority;
+        [HideInInspector]
         public float Air_resistance;
         public float gravity;
         public bool useGravity;
 
-        [HideInInspector]//スクリプト間情報
-        public bool Rotate;
-        [HideInInspector]
-        public bool IsTrigger;
+        //[HideInInspector]//スクリプト間情報
+        //public bool Rotate;
+        //[HideInInspector]
+        //public bool IsTrigger;
+
+        public class ObjectCondition
+        {
+            public bool Rotate;
+            public bool IsTrigger;
+        }
+        public ObjectCondition Condition;
     }
     public ObjectSetting ObjectSettings;
+
+    //
+    //c1 右上
+    //c2 左上
+    //c3 右下
+    //c4 左下
+    public CollisionLine c1;
+    public CollisionLine c2;
+    public CollisionLine c3;
+    public CollisionLine c4;
 
     public Vector2 LocalScriptCol_X;
     public Vector2 LocalScriptCol_Y;
@@ -220,6 +250,11 @@ public class motion : MonoBehaviour
     float b3 = 0;
     float b4 = 0;
 
+    void Awake()
+    {
+        ObjectSettings.Condition = new ObjectSetting.ObjectCondition();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -230,6 +265,7 @@ public class motion : MonoBehaviour
 
         box2d = GetComponent<BoxCollider2D>();
         script_motion = GetComponent<motion>();
+        
         if (box2d == null || box2d.offset != new Vector2(0, 0))
         {
             Debug.LogError("Error:There isn't BoxCollider2D or the BoxCollider2D's offset isn't set 0");
@@ -281,7 +317,7 @@ public class motion : MonoBehaviour
 
             //drowline(new Vector3(scriptcol_x.x, scriptcol_y.x, -1), new Vector3(scriptcol_x.y, scriptcol_y.x, -1));
 
-            drowline(dummy_transform_position, befor_transform_position, Color.red, 0, false);
+            if (debugs.movementDirection) drowline(dummy_transform_position, befor_transform_position, Color.red, 0);
             //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.x, 0));
             //drowline(new Vector3(scriptcol_x.y, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.x, 0));
             //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.y, 0));
@@ -312,8 +348,8 @@ public class motion : MonoBehaviour
         else if (Mathf.Approximately(OwnRotate, 360)) OwnRotate = 360;
 
         dummy_transform_position = transform.position;
-        ObjectSettings.IsTrigger = box2d.isTrigger;
-        ObjectSettings.Rotate = (OwnRotate % 90 == 0);
+        ObjectSettings.Condition.IsTrigger = box2d.isTrigger;
+        ObjectSettings.Condition.Rotate = (OwnRotate % 90 == 0);
 
         //if (dummy_transform_position != befor_transform_position) Debug.Log("not same");
 
@@ -366,26 +402,6 @@ public class motion : MonoBehaviour
             //p3:右下
             //p4:左下
         }
-
-        //switch (OwnRotate)
-        //{
-        //    case 0:
-        //        scriptcol_x = new Vector2(p1.x, p2.x);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
-        //        scriptcol_y = new Vector2(p1.y, p3.y);//(OriginalScriptCol.Y_BiggerOne, OriginalScriptCol.Y_SmallerOne);
-
-        //        LocalScriptCol_X_IncludeRotate = LocalScriptCol_X;
-        //        LocalScriptCol_Y_IncludeRotate = LocalScriptCol_Y;
-        //        break;
-
-        //    case 90:
-        //        scriptcol_x = new Vector2(p3.x, p1.x);//(OriginalScriptCol.Y_SmallerOne, OriginalScriptCol.Y_BiggerOne);
-        //        scriptcol_y = new Vector2(p1.y, p2.y);//(OriginalScriptCol.X_BiggerOne, OriginalScriptCol.X_SmallerOne);
-
-        //        LocalScriptCol_X_IncludeRotate = new Vector2((box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y), (-box2d.size.y * (transform.localScale.y * 0.5f)) + (box2d.offset.y * transform.localScale.y));
-        //        LocalScriptCol_Y_IncludeRotate = new Vector2((box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x), (-box2d.size.x * (transform.localScale.x * 0.5f)) + (box2d.offset.x * transform.localScale.x));
-        //        break;
-        //}
-
         //--------------------------------------------------------------------------------------
         //回転したとき用
         //p1:右上
@@ -459,15 +475,29 @@ public class motion : MonoBehaviour
             Rp3 = p3;
             Rp4 = p4;
         }
-        else if (OwnRotate < 90 && OwnRotate < 180)
+        else if (OwnRotate > 90 && OwnRotate < 180)
         {
-            Rp1 = p1;
-            Rp2 = p2;
-            Rp3 = p3;
-            Rp4 = p4;
+            Rp1 = p3;
+            Rp2 = p1;
+            Rp3 = p4;
+            Rp4 = p2;
+        }
+        else if (OwnRotate > 180 && OwnRotate < 270)
+        {
+            Rp1 = p4;
+            Rp2 = p3;
+            Rp3 = p2;
+            Rp4 = p1;
+        }
+        else if (OwnRotate > 270)
+        {
+            Rp1 = p2;
+            Rp2 = p4;
+            Rp3 = p1;
+            Rp4 = p3;
         }
 
-        if (ObjectSettings.Rotate)
+        if (ObjectSettings.Condition.Rotate)
         {
             collisionNoRotate();
         }
@@ -490,6 +520,7 @@ public class motion : MonoBehaviour
 
     void collisionRotate()
     {
+        //R
         //p1:右上の点
         //p2:左上の点
         //p3:右下の点
@@ -505,7 +536,20 @@ public class motion : MonoBehaviour
         //b3：右下の辺のb
         //b4：左下の辺のb
 
-        
+        //いろいろ準備
+        count = grounds.Length;
+        motion motion_processing;
+        //Vector2 motion_TransSize;
+
+        //
+        //c1 右上
+        //c2 左上
+        //c3 右下
+        //c4 左下
+        c1 = new CollisionLine((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x), dummy_transform_position.y - ((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x)) * dummy_transform_position.x);
+        c2 = new CollisionLine((Rp1.y - Rp4.y) / (Rp1.x - Rp4.x), dummy_transform_position.y - ((Rp1.y - Rp4.y) / (Rp1.x - Rp4.x)) * dummy_transform_position.x);
+        c3 = new CollisionLine((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x), dummy_transform_position.y - ((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x)) * dummy_transform_position.x);
+        c4 = new CollisionLine((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x), dummy_transform_position.y - ((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x)) * dummy_transform_position.x);
     }
 
     void collisionNoRotate()
@@ -737,14 +781,14 @@ public class motion : MonoBehaviour
 
                 if (dummy_transform_position.x - befor_transform_position.x > 0)//右
                 {
-                    Debug.Log((Mathf.Approximately(scriptcol_x.x, motion_processing.scriptcol_x.y) || scriptcol_x.x > motion_processing.scriptcol_x.y) +""+ (befor_scriptcol_x.x <= motion_processing.scriptcol_x.y) +""+ (scriptcol_y.x > motion_processing.scriptcol_y.y) +""+ (scriptcol_y.y < motion_processing.scriptcol_y.x));
+                    //ebug.Log((Mathf.Approximately(scriptcol_x.x, motion_processing.scriptcol_x.y) || scriptcol_x.x > motion_processing.scriptcol_x.y) +""+ (befor_scriptcol_x.x <= motion_processing.scriptcol_x.y) +""+ (scriptcol_y.x > motion_processing.scriptcol_y.y) +""+ (scriptcol_y.y < motion_processing.scriptcol_y.x));
                 
                     if ((Mathf.Approximately(scriptcol_x.x, motion_processing.scriptcol_x.y) || scriptcol_x.x > motion_processing.scriptcol_x.y) && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)
                     {
                         square_ground_wall_right_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_x.y - befor_scriptcol_x.x);
                         //square_ground_wall_right_distance_object[count - 1] = grounds[count - 1];
                         square_ground_wall_right[count - 1] = true;
-                        Debug.Log("Now");
+                        //Debug.Log("Now");
                     }
                     else square_ground_wall_right[count - 1] = false;
                 }
@@ -1033,7 +1077,7 @@ public class motion : MonoBehaviour
 
                 set_cols();
 
-                if (motion_TransSize.y >= mysize.y || Mathf.Approximately(motion_TransSize.y, mysize.y))//相手のほうが大きいまたは同じサイズ
+                if (motion_TransSize.y >= mysize.y || Mathf.Approximately(motion_TransSize.y, mysize.y))//相手のほうが大きいまたは同じサイズ//??
                 {
                     if ((a1 * motion_processing.scriptcol_x.y + b1) >= motion_processing.scriptcol_y.y && (a1 * motion_processing.scriptcol_x.y + b1) <= motion_processing.scriptcol_y.x && square_ground_wall_up[count - 1] == false && befor_scriptcol_x.x <= motion_processing.scriptcol_x.y && scriptcol_x.x >= motion_processing.scriptcol_x.y)//右側上ぶつかる
                     {
@@ -1184,7 +1228,7 @@ public class motion : MonoBehaviour
                         SetXCount += 1;
                         //candidate[0] = new PositionRelAbs
                         set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
-                        Debug.Log("aaa");
+                        //Debug.Log("aaa");
                     }
 
                     if (0 < movementvalue.x)
@@ -1226,7 +1270,7 @@ public class motion : MonoBehaviour
                         SetXCount += 1;
                         //candidate[1] = new PositionRelAbs
                         set_dummy_transform_position(true, change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false), false, 0);
-                        Debug.Log("bbb" + change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false));
+                        //Debug.Log("bbb" + change_col_to_pos_x(grounds[count_].GetComponent<motion>().scriptcol_x.x, false));
                     }
 
                     if (movementvalue.x < 0)
