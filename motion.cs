@@ -48,7 +48,7 @@ public class motion : MonoBehaviour
 
     public class CollisionLine//1次関数
     {
-        public CollisionLine(float a, float b)
+        public CollisionLine(float a, float b)//y = ax + b
         {
             this.a = a;
             this.b = b;
@@ -81,6 +81,7 @@ public class motion : MonoBehaviour
         {
             public bool Rotate;
             public bool IsTrigger;
+            //public bool Changed;
         }
         public ObjectCondition Condition;
     }
@@ -96,6 +97,11 @@ public class motion : MonoBehaviour
     public CollisionLine c3;
     public CollisionLine c4;
 
+    public CollisionLine B_c1;
+    public CollisionLine B_c2;
+    public CollisionLine B_c3;
+    public CollisionLine B_c4;
+
     public Vector2 LocalScriptCol_X;
     public Vector2 LocalScriptCol_Y;
 
@@ -103,7 +109,7 @@ public class motion : MonoBehaviour
     public Vector2 LocalScriptCol_Y_IncludeRotate;
 
     //---------------------------
-    //回転したとき用
+    //回転したとき用(絶対座標)
     //p1:右上
     //p2:左上
     //p3:右下
@@ -122,6 +128,16 @@ public class motion : MonoBehaviour
     public Vector2 Rp2;
     public Vector2 Rp3;
     public Vector2 Rp4;
+    //---------------------------
+    //回転したとき用(絶対座標)、1フレーム前
+    //p1:右上
+    //p2:左上
+    //p3:右下
+    //p4:左下
+    public Vector2 B_p1;
+    public Vector2 B_p2;
+    public Vector2 B_p3;
+    public Vector2 B_p4;
     //---------------------------
 
     //元の計算用(代わりに置き換え)
@@ -183,7 +199,7 @@ public class motion : MonoBehaviour
     public bool[] square_ground_wall_down;
 
     //----------------------------------------------------------------------
-    //座標の差(右/左:X座標 | 上/下:Y座標)の絶対値を格納する予定
+    //座標の差(右/左:X座標 | 上/下:Y座標)の絶対値を格納する
     public float[] square_ground_wall_right_distance;
 
     public float[] square_ground_wall_left_distance;
@@ -359,7 +375,7 @@ public class motion : MonoBehaviour
 
         //if (dummy_transform_position != befor_transform_position) Debug.Log("not same");
 
-        movement(new Vector2(0, 0), false);
+        Movement(new Vector2(0, 0), false);
 
 
         //Array.Fill(square_ground_wall_down_distance, -1);//←なんか出来ないからforで
@@ -415,6 +431,12 @@ public class motion : MonoBehaviour
         //p3:右下
         //p4:左下
         //Debug.Log("" + Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.x) + "__" + Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.y));
+
+        //引継ぎ
+        B_p1 = p1;
+        B_p2 = p2;
+        B_p3 = p3;
+        B_p4 = p4;
 
         float p1Atan = Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.x);
         float ra = (Mathf.PI * -transform.localRotation.eulerAngles.z) / 180;
@@ -547,6 +569,11 @@ public class motion : MonoBehaviour
         motion motion_processing;
         //Vector2 motion_TransSize;
 
+        B_c1 = c1;
+        B_c2 = c2;
+        B_c3 = c3;
+        B_c4 = c4;
+
         //
         //c1 右上
         //c2 左上
@@ -566,7 +593,10 @@ public class motion : MonoBehaviour
             square_ground_wall_up[count - 1] = false;
             square_ground_wall_down[count - 1] = false;
 
+            //if ()
+            {
 
+            }
 
             count -= 1;
         }
@@ -930,7 +960,7 @@ public class motion : MonoBehaviour
                                     square_ground_wall_down_distance[count - 1] = Mathf.Abs(motion_processing.scriptcol_y.x - befor_scriptcol_y.y);
                                 }
                                 square_ground_wall_down[count - 1] = true;
-                            }/////////////////////////////////////////////////////////////////////////////////__6/12__////////////////////////////////////////////////////////////////////
+                            }
 
                             //if (square_ground_wall_up[count - 1])
                             //{
@@ -1697,7 +1727,7 @@ public class motion : MonoBehaviour
         movementvalue += MovementValue;
     }
 
-    public void movement(Vector2 movementvalueforset, bool set = true)
+    public void Movement(Vector2 movementvalueforset, bool set = true)
     {
         bool numplus_x = true;
 
@@ -1790,7 +1820,7 @@ public class motion : MonoBehaviour
         if (touch_up && movementvalue.y > 0) movementvalue.y = 0;
 
         //dummy_transform_position += new Vector3(movementvalue.x, movementvalue.y, 0);
-        if (movementvalue.x != 0 || movementvalue.y != 0) change_dummy_transform_position(false, movementvalue.x, yTrue, InsteadOfMovementY);
+        if (movementvalue.x != 0 || movementvalue.y != 0) Change_dummy_transform_position(false, movementvalue.x, yTrue, InsteadOfMovementY);
 
         if (ObjectSettings.Air_resistance != 0)
         {
@@ -1892,7 +1922,7 @@ public class motion : MonoBehaviour
 
     //}
 
-    public void change_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0, bool movinig_without_col = false)
+    public void Change_dummy_transform_position(bool absolute_x, float x, bool absolute_y, float y, bool absolute_z = false, float z = 0, bool movinig_without_col = false)
     {
         if (!do_dummy_transform_position_to_set_execute) dummy_transform_position_to_set = dummy_transform_position;
 
@@ -1912,7 +1942,7 @@ public class motion : MonoBehaviour
         do_dummy_transform_position_to_set_execute = true;
     }
 
-    public bool is_touching(GameObject something)
+    public bool Is_touching(GameObject something)
     {
         if (ArrayUtility.Contains(touching, something))
         {
@@ -1921,18 +1951,19 @@ public class motion : MonoBehaviour
         else return false;
     }
 
-    public bool searching_object_withTag(string tag)
+    public bool Searching_object_withTag(string tag)
     {
         int c = 0;
         for (int count__ = touching.Length; count__ > 0; --count__)
         {
             if (touching[count__ - 1].tag == tag) c += 1;
         }
-        if (c > 0) return true;
-        else return false;
+        //if (c > 0) return true;
+        //else return false;
+        return c > 0;// ? true : false;
     }
 
-    public GameObject touching_Object(int num)
+    public GameObject Touching_Object(int num)
     {
         return touching[num];
     }
