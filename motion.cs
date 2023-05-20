@@ -15,6 +15,14 @@ public class motion : MonoBehaviour
         public bool collideLine_type_P;
         public bool collideLine_type_ScriptCol;
         public bool collideLine_type_BeforeScriptCol;
+        //public class Vertex
+        //{
+            public bool RightsideUp;
+            public bool RightsideDown;
+            public bool LeftsideUp;
+            public bool LeftsideDown;
+        //}
+        //public Vertex Vertexes;
         public bool movementDirection;
     }
     public Debugs debugs;
@@ -47,6 +55,7 @@ public class motion : MonoBehaviour
         public bool absY;
     }
 
+    [System.Serializable]
     public class CollisionLine//1次関数
     {
         public CollisionLine(float a, float b, bool NotMove = false, bool xEqual0 = false, bool yEqual0 = false)//y = ax + b
@@ -62,6 +71,23 @@ public class motion : MonoBehaviour
         public bool xEqual0;
         public bool yEqual0;
         public bool NotMove;
+
+        public object Debug()//CollisionLine Object)
+        {
+            return "a:" + a + ", b:" + b + ", NotMove:" + NotMove + ", xEqual0:" + xEqual0 + ", yEqual0:" + yEqual0;
+        }
+    }
+
+    [System.Serializable]
+    public class Objects
+    {
+        public Objects(GameObject gameObject, bool enabled = true)
+        {
+            this.gameObject = gameObject;
+            this.enabled = enabled;
+        }
+        public GameObject gameObject;
+        public bool enabled;
     }
 
     //public class bool3
@@ -122,10 +148,10 @@ public class motion : MonoBehaviour
     public ObjectSetting ObjectSettings;
 
     //
-    //c1 右上
-    //c2 左上
-    //c3 右下
-    //c4 左下
+    //c1 右上の辺
+    //c2 左上の辺
+    //c3 右下の辺
+    //c4 左下の辺
     public CollisionLine c1;
     public CollisionLine c2;
     public CollisionLine c3;
@@ -179,6 +205,16 @@ public class motion : MonoBehaviour
     public Vector2 B_p2;
     public Vector2 B_p3;
     public Vector2 B_p4;
+
+    //相対的
+    //Rp1:右上
+    //Rp2:左上
+    //Rp3:右下
+    //Rp4:左下
+    public Vector2 B_Rp1;
+    public Vector2 B_Rp2;
+    public Vector2 B_Rp3;
+    public Vector2 B_Rp4;
     //---------------------------
 
     //元の計算用(代わりに置き換え)
@@ -222,7 +258,7 @@ public class motion : MonoBehaviour
     public bool do_dummy_transform_position_to_set_execute;
     int calledCount;
 
-    BoxCollider2D box2d;
+    public BoxCollider2D box2d;
 
     motion script_motion;
 
@@ -232,25 +268,69 @@ public class motion : MonoBehaviour
     //GameObject[] objects = new GameObject[0];
     //public List<GameObject> objects = new List<GameObject>();
 
-    public List<GameObject> objects = new List<GameObject>();
+    public List<Objects?> objects = new List<Objects?>();
 
     public bool[] square_ground_wall_right;
+    public bool[] square_ground_wall_rightUp
+    {
+        get { return square_ground_wall_right; }
+        set { square_ground_wall_right = value; }
+    }
+    string[] rightUp_name;//enumでもよかったかもしれない
 
     public bool[] square_ground_wall_left;
+    public bool[] square_ground_wall_leftUp
+    {
+        get { return square_ground_wall_left; }
+        set { square_ground_wall_left = value; }
+    }
+    string[] leftUp_name;
 
     public bool[] square_ground_wall_up;
+    public bool[] square_ground_wall_rightDown
+    {
+        get { return square_ground_wall_up; }
+        set { square_ground_wall_up = value; }
+    }
+    string[] rightDown_name;
 
     public bool[] square_ground_wall_down;
+    public bool[] square_ground_wall_leftDown
+    {
+        get { return square_ground_wall_down; }
+        set { square_ground_wall_down = value; }
+    }
+    string[] leftDown_name;
 
     //----------------------------------------------------------------------
     //座標の差(右/左:X座標 | 上/下:Y座標)の絶対値を格納する
     public float[] square_ground_wall_right_distance;
+    public float[] square_ground_wall_rightUp_distance
+    {
+        get { return square_ground_wall_right_distance; }
+        set { square_ground_wall_right_distance = value; }
+    }
 
     public float[] square_ground_wall_left_distance;
+    public float[] square_ground_wall_leftUp_distance
+    {
+        get { return square_ground_wall_left_distance; }
+        set { square_ground_wall_left_distance = value; }
+    }
 
     public float[] square_ground_wall_up_distance;
+    public float[] square_ground_wall_rightDown_distance
+    {
+        get { return square_ground_wall_up_distance; }
+        set { square_ground_wall_up_distance = value; }
+    }
 
     public float[] square_ground_wall_down_distance;
+    public float[] square_ground_wall_leftDown_distance
+    {
+        get { return square_ground_wall_down_distance; }
+        set { square_ground_wall_down_distance = value; }
+    }
     //Mathf.Abs(a) aが絶対値になって戻ってくる
     //GameObject
     //public GameObject[] square_ground_wall_right_distance_object;
@@ -264,6 +344,7 @@ public class motion : MonoBehaviour
 
     public bool touching_something;
 
+    //------------------------------------------
     public bool touch_right;
 
     public bool touch_left;
@@ -271,6 +352,23 @@ public class motion : MonoBehaviour
     public bool touch_up;
 
     public bool touch_down;
+    //------------------------------------------
+    public bool touch_rightUp;
+
+    public bool touch_rightDown;
+
+    public bool touch_leftUp;
+
+    public bool touch_leftDown;
+
+    public bool touch_rightUp_To_touch_rightDown;
+
+    public bool touch_rightUp_To_leftUp;
+
+    public bool touch_leftUp_To_leftDown;
+
+    public bool touch_rightUp_To_leftDown;
+    //------------------------------------------
 
     bool before_touching_something;
 
@@ -326,8 +424,7 @@ public class motion : MonoBehaviour
 
         colcount();
 
-        box2d = GetComponent<BoxCollider2D>();
-        script_motion = GetComponent<motion>();
+        ResetComponentVariables();
 
         if (box2d == null || box2d.offset != new Vector2(0, 0))
         {
@@ -339,6 +436,7 @@ public class motion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //CLineGraph(new CollisionLine(1, 0), Color.cyan, new Vector2(0, 0));
         if (debugs.debuging == true)
         {
             if (debugs.collideLine_type_P)
@@ -373,12 +471,28 @@ public class motion : MonoBehaviour
 
                 drowline(new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.y, 0), new Vector3(befor_scriptcol_x.y, befor_scriptcol_y.y, 0), Color.red, 0);
             }
-            //scriptcol_x = new Vector2((dummy_transform_position.x + (box2d.size.x * (transform.localScale.x * 0.5f))), (dummy_transform_position.x + (-box2d.size.x * (transform.localScale.x * 0.5f))));
-            //scriptcol_y = new Vector2((dummy_transform_position.y + (box2d.size.y * (transform.localScale.y * 0.5f))), (dummy_transform_position.y + (-box2d.size.y * (transform.localScale.y * 0.5f))));
 
-            //Debug.Log("x:" + scriptcol_x + "y:" + scriptcol_y);
+            //p1:右上
+            //p2:左上
+            //p3:右下
+            //p4:左下
 
-            //drowline(new Vector3(scriptcol_x.x, scriptcol_y.x, -1), new Vector3(scriptcol_x.y, scriptcol_y.x, -1));
+            if (debugs.RightsideUp)
+            {
+                drowline(p1, B_p1, Color.yellow, 0);
+            }
+            if (debugs.RightsideDown)
+            {
+                drowline(p3, B_p3, Color.yellow, 0);
+            }
+            if (debugs.LeftsideUp)
+            {
+                drowline(p2, B_p2, Color.yellow, 0);
+            }
+            if (debugs.LeftsideDown)
+            {
+                drowline(p4, B_p4, Color.yellow, 0);
+            }
 
             if (debugs.movementDirection) drowline(dummy_transform_position, befor_transform_position, Color.red, 0);
             //drowline(new Vector3(scriptcol_x.x, befor_scriptcol_y.x, 0), new Vector3(befor_scriptcol_x.x, befor_scriptcol_y.x, 0));
@@ -407,7 +521,11 @@ public class motion : MonoBehaviour
         ToSetStartFrom = 0;
 
         //Null一掃
-        objects.RemoveAll(elementIsNull);
+        //objects.RemoveAll(elementIsNull);
+        for (int i = 0; i < objects.Count; i++)
+        {
+            if (objects[i].gameObject == null) objects.RemoveAt(i);
+        }
 
         OwnRotate = transform.localRotation.eulerAngles.z;
         if (Mathf.Approximately(OwnRotate, 0)) OwnRotate = 0;
@@ -416,7 +534,15 @@ public class motion : MonoBehaviour
         else if (Mathf.Approximately(OwnRotate, 360)) OwnRotate = 360;
 
         dummy_transform_position = transform.position;
-        ObjectSettings.Condition.IsTrigger = box2d.isTrigger;
+        try
+        {
+            ObjectSettings.Condition.IsTrigger = box2d.isTrigger;
+        }
+        catch (NullReferenceException)
+        {
+            ResetComponentVariables();
+            ObjectSettings.Condition.IsTrigger = box2d.isTrigger;
+        }
         ObjectSettings.Condition.Rotate = (OwnRotate % 90 == 0);
 
         //if (dummy_transform_position != befor_transform_position) Debug.Log("not same");
@@ -440,6 +566,22 @@ public class motion : MonoBehaviour
         for (int count_ = square_ground_wall_right_distance.Length; count_ > 0; --count_)
         {
             square_ground_wall_right_distance[count_ - 1] = Mathf.Infinity;
+        }
+        for (int count_ = rightUp_name.Length; count_ > 0; --count_)
+        {
+            rightUp_name[count_ - 1] = "";
+        }
+        for (int count_ = rightDown_name.Length; count_ > 0; --count_)
+        {
+            rightDown_name[count_ - 1] = "";
+        }
+        for (int count_ = leftUp_name.Length; count_ > 0; --count_)
+        {
+            leftUp_name[count_ - 1] = "";
+        }
+        for (int count_ = leftDown_name.Length; count_ > 0; --count_)
+        {
+            leftDown_name[count_ - 1] = "";
         }
 
         if (CalledFrom != "MoveFromSet" && set_befor_col > 0 && do_dummy_transform_position_to_set_execute)
@@ -492,6 +634,11 @@ public class motion : MonoBehaviour
         B_p2 = p2;
         B_p3 = p3;
         B_p4 = p4;
+
+        B_Rp1 = Rp1;
+        B_Rp2 = Rp2;
+        B_Rp3 = Rp3;
+        B_Rp4 = Rp4;
 
         float p1Atan = Mathf.Atan(LocalScriptCol_Y.x / LocalScriptCol_X.x);
         float ra = (Mathf.PI * -transform.localRotation.eulerAngles.z) / 180;
@@ -642,14 +789,24 @@ public class motion : MonoBehaviour
         B_c4 = c4;
 
         //
-        //c1 右上
-        //c2 左上
-        //c3 右下
-        //c4 左下
-        c1 = new CollisionLine((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x), dummy_transform_position.y - ((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x)) * dummy_transform_position.x);
-        c2 = new CollisionLine((Rp1.y - Rp4.y) / (Rp1.x - Rp4.x), dummy_transform_position.y - ((Rp1.y - Rp4.y) / (Rp1.x - Rp4.x)) * dummy_transform_position.x);
-        c3 = new CollisionLine((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x), dummy_transform_position.y - ((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x)) * dummy_transform_position.x);
-        c4 = new CollisionLine((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x), dummy_transform_position.y - ((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x)) * dummy_transform_position.x);
+        //c1 右上の辺
+        //c2 左上の辺
+        //c3 右下の辺
+        //c4 左下の辺
+        c1 = new CollisionLine((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x), Rp3.y - (Rp3.y - Rp1.y) / (Rp3.x - Rp1.x) * Rp3.x);
+        c2 = new CollisionLine((Rp1.y - Rp2.y) / (Rp1.x - Rp2.x), Rp1.y - (Rp1.y - Rp2.y) / (Rp1.x - Rp2.x) * Rp1.x);
+        c3 = new CollisionLine((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x), Rp3.y - (Rp3.y - Rp4.y) / (Rp3.x - Rp4.x) * Rp3.x);
+        c4 = new CollisionLine((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x), Rp4.y - (Rp4.y - Rp2.y) / (Rp4.x - Rp2.x) * Rp4.x);
+
+        //c1 = new CollisionLine((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x), dummy_transform_position.y - ((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x)) * dummy_transform_position.x);
+        //c2 = new CollisionLine((Rp1.y - Rp2.y) / (Rp1.x - Rp2.x), dummy_transform_position.y - ((Rp1.y - Rp2.y) / (Rp1.x - Rp2.x)) * dummy_transform_position.x);
+        //c3 = new CollisionLine((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x), dummy_transform_position.y - ((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x)) * dummy_transform_position.x);
+        //c4 = new CollisionLine((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x), dummy_transform_position.y - ((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x)) * dummy_transform_position.x);
+
+        //c1 = new CollisionLine((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x), dummy_transform_position.y - ((Rp3.y - Rp1.y) / (Rp3.x - Rp1.x)) * dummy_transform_position.x);
+        //c2 = new CollisionLine((Rp1.y - Rp4.y) / (Rp1.x - Rp4.x), dummy_transform_position.y - ((Rp1.y - Rp4.y) / (Rp1.x - Rp4.x)) * dummy_transform_position.x);
+        //c3 = new CollisionLine((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x), dummy_transform_position.y - ((Rp3.y - Rp4.y) / (Rp3.x - Rp4.x)) * dummy_transform_position.x);
+        //c4 = new CollisionLine((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x), dummy_transform_position.y - ((Rp4.y - Rp2.y) / (Rp4.x - Rp2.x)) * dummy_transform_position.x);
 
         //動き
         //c1_B_c1：右上ー前右上
@@ -733,26 +890,231 @@ public class motion : MonoBehaviour
         {
             c4_B_c4 = new CollisionLine(0, 0, true);
         }
-        
+
+        //動き
+        //c1_B_c1：右上ー前右上
+        //c2_B_c2：左上ー前左上
+        //c3_B_c3：右下ー前右下
+        //c4_B_c4：左下ー前左下
+
+        //
+        //c1 右上
+        //c2 左上
+        //c3 右下
+        //c4 左下
+
+        //R
+        //p1:右上の点
+        //p2:左上の点
+        //p3:右下の点
+        //p4:左下の点
 
         while (count > 0)
         {
-            motion_processing = objects[count - 1].GetComponent<motion>();
+            try
+            {
+                motion_processing = objects[count - 1].gameObject.GetComponent<motion>();
+            }
+            catch (NullReferenceException)
+            {
+                square_ground_wall_left[count - 1] = false;
+                square_ground_wall_right[count - 1] = false;
+                square_ground_wall_up[count - 1] = false;
+                square_ground_wall_down[count - 1] = false;
+                count -= 1;
+                continue;
+            }
 
             square_ground_wall_left[count - 1] = false;
             square_ground_wall_right[count - 1] = false;
             square_ground_wall_up[count - 1] = false;
             square_ground_wall_down[count - 1] = false;
 
-            //Debug.Log(c1_B_c1.a + "、" + c1_B_c1.b);
-
-            //右上
-            if (WhereDoLinesCross(c1_B_c1, motion_processing.c3, p1, B_p1) != null)
+            if (objects[count - 1].enabled == false)
             {
-                Debug.Log("collided");
+                count -= 1;
+                continue;
             }
 
+            //CLineGraph(motion_processing.c2, Color.red, dummy_transform_position, 15);
+            //CLineGraph(motion_processing.c1, Color.red, dummy_transform_position, 15);
+            //drowline(Rp4, B_Rp4, Color.blue, 0.1f);//
+            //CLineGraph(c4_B_c4, Color.blue, dummy_transform_position);
+
+            //右上
+            if (WhereDoLinesCross(c1_B_c1, motion_processing.c3, Rp1, B_Rp1) != null)
+            {
+                square_ground_wall_rightUp_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp1.x - B_Rp1.x, 2) + Mathf.Pow(Rp1.y - B_Rp1.y, 2));
+                square_ground_wall_rightUp[count - 1] = true;
+                rightUp_name[count - 1] = "c3";
+            }
+            if (WhereDoLinesCross(c1_B_c1, motion_processing.c4, Rp2, B_Rp2) != null)
+            {
+                if (square_ground_wall_rightUp[count - 1])
+                {
+                    if (square_ground_wall_rightUp_distance[count - 1] > Mathf.Sqrt(Mathf.Pow(Rp1.x - B_Rp1.x, 2) + Mathf.Pow(Rp1.y - B_Rp1.y, 2)))
+                    {
+                        square_ground_wall_rightUp_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp1.x - B_Rp1.x, 2) + Mathf.Pow(Rp1.y - B_Rp1.y, 2));
+                        square_ground_wall_rightUp[count - 1] = true;
+                        rightUp_name[count - 1] = "c4";
+                    }
+                }
+                else
+                {
+                    square_ground_wall_rightUp_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp1.x - B_Rp1.x, 2) + Mathf.Pow(Rp1.y - B_Rp1.y, 2));
+                    square_ground_wall_rightUp[count - 1] = true;
+                    rightUp_name[count - 1] = "c4";
+                }
+            }
+
+            //右下
+            if (WhereDoLinesCross(c3_B_c3, motion_processing.c2, Rp3, B_Rp3) != null)
+            {
+                square_ground_wall_rightDown_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp3.x - B_Rp3.x, 2) + Mathf.Pow(Rp3.y - B_Rp3.y, 2));
+                square_ground_wall_rightDown[count - 1] = true;
+                rightDown_name[count - 1] = "c2";
+            }
+            if (WhereDoLinesCross(c3_B_c3, motion_processing.c4, Rp3, B_Rp3) != null)
+            {
+                if (square_ground_wall_rightDown[count - 1])
+                {
+                    if (square_ground_wall_rightDown_distance[count - 1] > Mathf.Sqrt(Mathf.Pow(Rp3.x - B_Rp3.x, 2) + Mathf.Pow(Rp3.y - B_Rp3.y, 2)))
+                    {
+                        square_ground_wall_rightDown_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp3.x - B_Rp3.x, 2) + Mathf.Pow(Rp3.y - B_Rp3.y, 2));
+                        square_ground_wall_rightDown[count - 1] = true;
+                        rightDown_name[count - 1] = "c4";
+                    }
+                }
+                else
+                {
+                    square_ground_wall_rightDown_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp3.x - B_Rp3.x, 2) + Mathf.Pow(Rp3.y - B_Rp3.y, 2));
+                    square_ground_wall_rightDown[count - 1] = true;
+                    rightDown_name[count - 1] = "c4";
+                }
+            }
+
+            //左上
+            if (WhereDoLinesCross(c2_B_c2, motion_processing.c2, Rp2, B_Rp2) != null)
+            {
+                square_ground_wall_leftUp_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp2.x - B_Rp2.x, 2) + Mathf.Pow(Rp2.y - B_Rp2.y, 2));
+                square_ground_wall_leftUp[count - 1] = true;
+                leftUp_name[count - 1] = "c2";
+            }
+            if (WhereDoLinesCross(c2_B_c2, motion_processing.c3, Rp2, B_Rp2) != null)
+            {
+                if (square_ground_wall_leftUp[count - 1])
+                {
+                    if (square_ground_wall_leftUp_distance[count - 1] > Mathf.Sqrt(Mathf.Pow(Rp2.x - B_Rp2.x, 2) + Mathf.Pow(Rp2.y - B_Rp2.y, 2)))
+                    {
+                        square_ground_wall_leftUp_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp2.x - B_Rp2.x, 2) + Mathf.Pow(Rp2.y - B_Rp2.y, 2));
+                        square_ground_wall_leftUp[count - 1] = true;
+                        leftUp_name[count - 1] = "c3";
+                    }
+                }
+                else
+                {
+                    square_ground_wall_leftUp_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp2.x - B_Rp2.x, 2) + Mathf.Pow(Rp2.y - B_Rp2.y, 2));
+                    square_ground_wall_leftUp[count - 1] = true;
+                    leftUp_name[count - 1] = "c3";
+                }
+            }
+            
+            //左下
+            if (WhereDoLinesCross(c4_B_c4, motion_processing.c1, Rp4, B_Rp4) != null)
+            {
+                square_ground_wall_leftDown_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp4.x - B_Rp4.x, 2) + Mathf.Pow(Rp4.y - B_Rp4.y, 2));
+                square_ground_wall_leftDown[count - 1] = true;
+                leftDown_name[count - 1] = "c1";
+            }
+            if (WhereDoLinesCross(c4_B_c4, motion_processing.c2, Rp4, B_Rp4) != null)
+            {
+                if (square_ground_wall_leftDown[count - 1])
+                {
+                    if (square_ground_wall_leftDown_distance[count - 1] > Mathf.Sqrt(Mathf.Pow(Rp4.x - B_Rp4.x, 2) + Mathf.Pow(Rp4.y - B_Rp4.y, 2)))
+                    {
+                        square_ground_wall_leftDown_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp4.x - B_Rp4.x, 2) + Mathf.Pow(Rp4.y - B_Rp4.y, 2));
+                        square_ground_wall_leftDown[count - 1] = true;
+                        leftDown_name[count - 1] = "c2";
+                    }
+                }
+                else
+                {
+                    square_ground_wall_leftDown_distance[count - 1] = Mathf.Sqrt(Mathf.Pow(Rp4.x - B_Rp4.x, 2) + Mathf.Pow(Rp4.y - B_Rp4.y, 2));
+                    square_ground_wall_leftDown[count - 1] = true;
+                    leftDown_name[count - 1] = "c2";
+                }
+            }
+            
             count -= 1;
+        }
+
+        insertposition();
+
+        if (objects.Count != 0 && ArrayUtility.Contains<bool>(square_ground_wall_rightUp, true))
+        {
+            float distance = Mathf.Min(square_ground_wall_rightUp_distance);
+            int count_;
+
+            if (distance != Mathf.Infinity)
+            {
+                count_ = ArrayUtility.IndexOf(square_ground_wall_rightUp_distance, distance);
+
+                if (!ObjectSettings.only_whether_touch)
+                {
+                    if (rightUp_name[count_ - 1] == "c3")
+                    {
+
+                    }
+                    //touch_right = true;
+                    //touchingCount += 1;
+                    ////SetXCount += 1;
+                    ////candidate[0] = new PositionRelAbs
+                    //set_dummy_transform_position(true, change_col_to_pos_x(objects[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
+                    ////Debug.Log("aaa");
+                }
+
+                if (0 < movementvalue.x)
+                {
+                    movementvalue.x = 0;
+                }
+            }
+        }
+        else if (objects.Count != 0 && !ArrayUtility.Contains<bool>(square_ground_wall_rightUp, true))
+        {
+
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        if (objects.Count != 0 && ArrayUtility.Contains<bool>(square_ground_wall_rightDown, true))
+        {
+
+        }
+        else if (objects.Count != 0 && !ArrayUtility.Contains<bool>(square_ground_wall_rightDown, true))
+        {
+
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        if (objects.Count != 0 && ArrayUtility.Contains<bool>(square_ground_wall_leftUp, true))
+        {
+
+        }
+        else if (objects.Count != 0 && !ArrayUtility.Contains<bool>(square_ground_wall_leftUp, true))
+        {
+
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        if (objects.Count != 0 && ArrayUtility.Contains<bool>(square_ground_wall_leftDown, true))
+        {
+
+        }
+        else if (objects.Count != 0 && !ArrayUtility.Contains<bool>(square_ground_wall_leftDown, true))
+        {
+
         }
     }
 
@@ -843,9 +1205,9 @@ public class motion : MonoBehaviour
 
         while (count > 0)
         {
-            motion_processing = objects[count - 1].GetComponent<motion>();
+            motion_processing = objects[count - 1].gameObject.GetComponent<motion>();
 
-            motion_TransSize = objects[count - 1].transform.localScale;
+            motion_TransSize = objects[count - 1].gameObject.transform.localScale;
 
             square_ground_wall_left[count - 1] = false;
             square_ground_wall_right[count - 1] = false;
@@ -861,7 +1223,6 @@ public class motion : MonoBehaviour
                 if (dummy_transform_position.x == befor_transform_position.x && square_ground_wall_left[count - 1] && (!Mathf.Approximately(scriptcol_x.y, motion_processing.scriptcol_x.x) || scriptcol_y.x < motion_processing.scriptcol_y.y || scriptcol_y.y > motion_processing.scriptcol_y.x))//!(scriptcol_y.x > motion_processing.scriptcol_y.y && scriptcol_y.y < motion_processing.scriptcol_y.x)))//!(scriptcol_x.y <= motion_processing.scriptcol_x.x && befor_scriptcol_x.y >= motion_processing.scriptcol_x.x && touch_right == false && scriptcol_y.x >= motion_processing.scriptcol_y.y && scriptcol_y.y <= motion_processing.scriptcol_y.x))//左側ぶつかる
                 {                                                                                                   //scriptcol_x.y != motion_processing.scriptcol_x.x
                     square_ground_wall_left[count - 1] = false;
-                    Debug.Log("1up");
                 }
 
                 //上下
@@ -1387,7 +1748,7 @@ public class motion : MonoBehaviour
                         touchingCount += 1;
                         //SetXCount += 1;
                         //candidate[0] = new PositionRelAbs
-                        set_dummy_transform_position(true, change_col_to_pos_x(objects[count_].GetComponent<motion>().scriptcol_x.y), false, 0);
+                        set_dummy_transform_position(true, change_col_to_pos_x(objects[count_].gameObject.GetComponent<motion>().scriptcol_x.y), false, 0);
                         //Debug.Log("aaa");
                     }
 
@@ -1429,7 +1790,7 @@ public class motion : MonoBehaviour
                         touchingCount += 1;
                         //SetXCount += 1;
                         //candidate[1] = new PositionRelAbs
-                        set_dummy_transform_position(true, change_col_to_pos_x(objects[count_].GetComponent<motion>().scriptcol_x.x, false), false, 0);
+                        set_dummy_transform_position(true, change_col_to_pos_x(objects[count_].gameObject.GetComponent<motion>().scriptcol_x.x, false), false, 0);
                         //Debug.Log("bbb" + change_col_to_pos_x(objects[count_].GetComponent<motion>().scriptcol_x.x, false));
                     }
 
@@ -1472,7 +1833,7 @@ public class motion : MonoBehaviour
                         touchingCount += 1;
                         //SetYCount += 1;
                         //candidate[2] = new PositionRelAbs
-                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(objects[count_].GetComponent<motion>().scriptcol_y.y));
+                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(objects[count_].gameObject.GetComponent<motion>().scriptcol_y.y));
                     }
 
                     if (0 < movementvalue.y)
@@ -1514,7 +1875,7 @@ public class motion : MonoBehaviour
                         touchingCount += 1;
                         //SetYCount += 1;
                         //candidate[3] = new PositionRelAbs
-                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(objects[count_].GetComponent<motion>().scriptcol_y.x, false));
+                        set_dummy_transform_position(false, 0, true, change_col_to_pos_y(objects[count_].gameObject.GetComponent<motion>().scriptcol_y.x, false));
                     }
 
                     if (0 > movementvalue.y)
@@ -1793,7 +2154,7 @@ public class motion : MonoBehaviour
                 {
                     if (square_ground_wall_down[cc - 1])
                     {
-                        touching_down[putcount] = objects[cc - 1];
+                        touching_down[putcount] = objects[cc - 1].gameObject;
                         putcount += 1;
                     }
                 }
@@ -1805,7 +2166,7 @@ public class motion : MonoBehaviour
                 {
                     if (square_ground_wall_up[cc - 1])
                     {
-                        touching_up[putcount] = objects[cc - 1];
+                        touching_up[putcount] = objects[cc - 1].gameObject;
                         putcount += 1;
                     }
                 }
@@ -1817,7 +2178,7 @@ public class motion : MonoBehaviour
                 {
                     if (square_ground_wall_left[cc - 1])
                     {
-                        touching_left[putcount] = objects[cc - 1];
+                        touching_left[putcount] = objects[cc - 1].gameObject;
                         putcount += 1;
                     }
                 }
@@ -1829,7 +2190,7 @@ public class motion : MonoBehaviour
                 {
                     if (square_ground_wall_right[cc - 1])
                     {
-                        touching_right[putcount] = objects[cc - 1];
+                        touching_right[putcount] = objects[cc - 1].gameObject;
                         putcount += 1;
                     }
                 }
@@ -1946,7 +2307,7 @@ public class motion : MonoBehaviour
         {
             //try
             //{
-            motion__processing = objects[c - 1].GetComponent<motion>();
+            motion__processing = objects[c - 1].gameObject.GetComponent<motion>();
             //}
             //catch (UnassignedReferenceException a)
             //{
@@ -2213,7 +2574,14 @@ public class motion : MonoBehaviour
 
     Vector2? WhereDoLinesCross(CollisionLine L1, CollisionLine L2, Vector2? StartingPoint = null, Vector2? EndingPoint = null)
     {
-        if (L2.NotMove) return null;
+        try
+        {
+            if (L2.NotMove) return null;
+        }
+        catch (NullReferenceException)
+        {
+            return null;
+        }
         //Debug.Log(L1.a+"、"+ L1.b+ "、" + L2 + "、" + new Vector2((L1.b - L2.b) / (L2.a - L1.a), L1.a * ((L1.b - L2.b) / (L2.a - L1.a)) + L1.b));
         Vector2 tempX;
         Vector2 tempY;
@@ -2244,12 +2612,14 @@ public class motion : MonoBehaviour
         }
         else if (L1.yEqual0 && !L2.yEqual0)
         {
+            //ここ
             if (L2.xEqual0)
             {
                 return new Vector2(L1.b, L2.b);
             }
             else
             {
+                //ここ
                 calculated = new Vector2(L1.b, L2.a * L1.b + L2.b);
             }
         }
@@ -2262,14 +2632,21 @@ public class motion : MonoBehaviour
         }
         else if (StartingPoint != null && EndingPoint != null)
         {
-            tempX = new Vector2(StartingPoint.Value.x, EndingPoint.Value.x);
-            tempY = new Vector2(StartingPoint.Value.y, EndingPoint.Value.y);
+            //ここ
+            tempX = StartingPoint.Value.x < EndingPoint.Value.x ? new Vector2(StartingPoint.Value.x, EndingPoint.Value.x) : new Vector2(EndingPoint.Value.x, StartingPoint.Value.x);
+            tempY = StartingPoint.Value.y < EndingPoint.Value.y ? new Vector2(StartingPoint.Value.y, EndingPoint.Value.y) : new Vector2(EndingPoint.Value.y, StartingPoint.Value.y);
+
+            StartingPoint = new Vector2(tempX.x, tempY.x);
+            EndingPoint = new Vector2(tempX.y, tempY.y);
 
             try
             {
-                if (Mathf.Approximately(L1.a, L2.a)) return null;
-                else if (tempX.x <= calculated.x && calculated.x <= tempX.y
-                    && tempY.x <= calculated.y && calculated.y <= tempY.y)
+                if (Mathf.Approximately(L1.a, L2.a))
+                {
+                    return null;
+                }
+                else if ((StartingPoint.Value.x <= calculated.x || Mathf.Approximately(StartingPoint.Value.x, calculated.x)) && (calculated.x <= EndingPoint.Value.x || Mathf.Approximately(calculated.x, EndingPoint.Value.x))
+                    && (StartingPoint.Value.y <= calculated.y || Mathf.Approximately(StartingPoint.Value.y, calculated.y)) && (Mathf.Approximately(EndingPoint.Value.y, calculated.y) || calculated.y <= EndingPoint.Value.y))
                 {
                     return calculated;
                 }
@@ -2292,6 +2669,14 @@ public class motion : MonoBehaviour
         square_ground_wall_right = new bool[objects.Count];
 
         square_ground_wall_left = new bool[objects.Count];
+
+        rightUp_name = new string[objects.Count];
+
+        rightDown_name = new string[objects.Count];
+
+        leftUp_name = new string[objects.Count];
+
+        leftDown_name = new string[objects.Count];
 
         square_ground_wall_down_distance = new float[objects.Count];
 
@@ -2317,9 +2702,34 @@ public class motion : MonoBehaviour
         Debug.DrawLine(start, end, color, time, !hide);
     }
 
+    void CLineGraph(CollisionLine Line, Color color, Vector2 center, float radius = 5, float time = 0)
+    {
+        if (!Line.NotMove)
+        {
+            if (Line.xEqual0)
+            {
+                Debug.DrawLine(new Vector3(center.x - radius, Line.b), new Vector3(center.x + radius, Line.b), color);
+            }
+            else if (Line.yEqual0)
+            {
+                Debug.DrawLine(new Vector3(Line.b, center.y - radius), new Vector3(Line.b, center.y + radius), color);
+            }
+            else
+            {
+                Debug.DrawLine(new Vector3(center.x - radius, (center.x - radius) * Line.a + Line.b), new Vector3(center.x + radius, (center.x + radius) * Line.a + Line.b), color);
+            }
+        }
+    }
+
     static bool elementIsNull(GameObject element)
     {
         return !element;
+    }
+
+    private void ResetComponentVariables()
+    {
+        box2d = GetComponent<BoxCollider2D>();
+        script_motion = GetComponent<motion>();
     }
 
     bool RangeCheck<T>(List<T> arr, int index, [CallerLineNumber] int CalledFrom = 0)//, [CallerMemberName] string CalledBy = "")
@@ -2344,7 +2754,7 @@ public class motion : MonoBehaviour
         {
             try
             {
-                s_ = String.Concat(String.Concat(objects[c - 1].name.ToString(), " = "), list[c - 1].ToString()) + ", ";
+                s_ = String.Concat(String.Concat(objects[c - 1].gameObject.name.ToString(), " = "), list[c - 1].ToString()) + ", ";
             }
 #pragma warning disable CS0168 // 変数は宣言されていますが、使用されていません
             catch (UnassignedReferenceException a)
